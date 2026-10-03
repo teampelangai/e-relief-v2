@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Relief System</title>
+  <title>E-Relief System v2</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -19,7 +19,7 @@
       await OneSignal.init({
         appId: "2fb53561-b4ba-4d25-a42c-88ea76ce83c8",
         allowLocalhostAsSecureOrigin: true,
-        serviceWorkerParam: { scope: "/dinamik/" },
+        serviceWorkerParam: { scope: "/e-relief-v2/" },
         serviceWorkerPath: "sw.js"
       });
 
@@ -59,12 +59,12 @@
       <div class="flex items-center space-x-3">
         <span class="text-2xl">📢</span>
         <div>
-          <h1 class="font-black text-xl bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">E-RELIEF</h1>
+          <h1 class="font-black text-xl bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">E-RELIEF v2</h1>
           <p class="text-xs text-slate-400 font-medium" id="displaySchoolName">| Sekolah</p>
         </div>
       </div>
       <div class="flex space-x-1 bg-slate-900/60 p-1 rounded-xl border border-slate-700">
-        <button id="tabBtnTv" onclick="switchTab('tv')" class="px-4 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold">🖥️️ TV</button>
+        <button id="tabBtnTv" onclick="switchTab('tv')" class="px-4 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold">🖥️ TV</button>
         <button id="tabBtnMobile" onclick="switchTab('mobile')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">📱 Mobile</button>
         <button id="tabBtnAdmin" onclick="switchTab('admin')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">⚙️ Admin</button>
       </div>
@@ -184,7 +184,7 @@
         <div id="adminStatus" class="text-xs font-semibold text-amber-400"></div>
 
         <div class="pt-4 border-t border-slate-700 flex justify-between items-center">
-          <button onclick="hantarNotifikasiRelief('📢 UJIAN NOTIFIKASI', 'Sistem E-Relief berfungsi dengan baik!')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">
+          <button onclick="hantarNotifikasiRelief('📢 UJIAN NOTIFIKASI', 'Sistem E-Relief v2 berfungsi dengan baik!')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">
             🔔 Hantar Ujian Notifikasi
           </button>
           <button onclick="clearAllData()" class="bg-rose-600/20 text-rose-400 border border-rose-600/30 hover:bg-rose-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition">Padam Semua Data Cloud</button>
@@ -243,7 +243,7 @@
     </table>
 
     <div class="mt-8 pt-4 border-t border-slate-300 flex justify-between text-xs text-slate-500">
-      <div>* Dokumen ini dijanakan secara automatik oleh Sistem E-Relief.</div>
+      <div>* Dokumen ini dijanakan secara automatik oleh Sistem E-Relief v2.</div>
       <div>Pengesahan Digital Done</div>
     </div>
   </div>
@@ -251,7 +251,7 @@
   <script>
     //=== 1. KONFIGURASI SUPABASE & ONESIGNAL ===
     const SUPABASE_URL = 'https://jzqirxombshcmbatbmso.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6cWlyeG9tYnNoY21iYXRibXNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3NzI0MDEsImV4cCI6MjEwNjM0ODQwMX0.MXAlafZGrBOjRMYCqWU4lVO2mYf6Au0kktiQOLlcO68';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6cWlyeG9tYnNoY21iYXRibXNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3NzI4MDEsImV4cCI6MjEwNjM0ODQwMX0.MXAlafZGrBOjRMYCqWU4lVO2mYf6Au0kktiQOLlcO68';
     
     const ONESIGNAL_APP_ID = "2fb53561-b4ba-4d25-a42c-88ea76ce83c8";
     const ONESIGNAL_REST_API_KEY = "os_v2_app_f62tkynuxjgsljbmrdvhntudzafzdl3y7niuagvgt5ybrqkt7biorixqcbbz4dfqurauz5wnn7fflfs47vqwpixnnfovk4zodkbnaci";
@@ -324,7 +324,7 @@
         included_segments: ['Total Subscriptions'],
         headings: { en: tajuk || "📢 JADUAL RELIEF BAHARU", ms: tajuk || "📢 JADUAL RELIEF BAHARU" },
         contents: { en: mesej || "Jadual ganti / relief telah dikemas kini.", ms: mesej || "Jadual ganti / relief telah dikemas kini." },
-        url: "https://teampelangai.github.io/dinamik/"
+        url: "https://teampelangai.github.io/e-relief-v2/"
       };
 
       const proxyUrl = 'https://onesignal-proxy.teampelangai.workers.dev/';
@@ -346,7 +346,7 @@
         if (data.id) {
           alert("🚀 BERJAYA! Mesej notifikasi telah dihantar ke pelayan OneSignal.\nID: " + data.id);
         } else if (data.errors) {
-          alert("⚠️️ Ralat OneSignal API:\n" + JSON.stringify(data.errors));
+          alert("⚠️ Ralat OneSignal API:\n" + JSON.stringify(data.errors));
         }
       } catch (err) {
         console.error("Ralat Penghantaran:", err);
@@ -565,7 +565,6 @@
         return;
       }
 
-      // Tunjukkan butang aksi pukal jika ada jadual
       bulkContainer.classList.remove('hidden');
 
       teacherItems.forEach(item => {
@@ -606,7 +605,6 @@
       }
     }
 
-    // FUNGSI KHAS: PENGESAHAN SEMUA PUKAL (BULK CONFIRM)
     async function confirmAllBulk() {
       const selectedTeacher = document.getElementById('teacherSelect').value;
       if (!selectedTeacher) return;
@@ -630,11 +628,9 @@
       }
 
       await fetchCloudData();
-      // Selepas sahkan pukal, terus jana dan papar PDF
       generatePDF();
     }
 
-    // FUNGSI KHAS: JANA LAMPIRAN SLIP RELIEF PDF
     function generatePDF() {
       const selectedTeacher = document.getElementById('teacherSelect').value;
       if (!selectedTeacher) {
@@ -648,7 +644,6 @@
         return;
       }
 
-      // Isi maklumat dalam template PDF
       document.getElementById('pdfSchoolName').innerText = currentSchool;
       document.getElementById('pdfTeacherName').innerText = selectedTeacher;
       document.getElementById('pdfTotalCount').innerText = teacherItems.length;
