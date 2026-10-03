@@ -64,16 +64,17 @@
         </div>
       </div>
       <div class="flex space-x-1 bg-slate-900/60 p-1 rounded-xl border border-slate-700">
-        <button id="tabBtnTv" onclick="switchTab('tv')" class="px-4 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold">🖥️ TV</button>
-        <button id="tabBtnMobile" onclick="switchTab('mobile')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">📱 Mobile</button>
-        <button id="tabBtnAdmin" onclick="switchTab('admin')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">⚙️ Admin</button>
+        <button id="tabBtnTv" onclick="switchTab('tv')" class="px-3 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold">🖥️ TV</button>
+        <button id="tabBtnTvSlide" onclick="switchTab('tvslide')" class="px-3 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">🎞️ TV Slide</button>
+        <button id="tabBtnMobile" onclick="switchTab('mobile')" class="px-3 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">📱 Mobile</button>
+        <button id="tabBtnAdmin" onclick="switchTab('admin')" class="px-3 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">⚙️ Admin</button>
       </div>
     </div>
   </header>
 
   <main class="max-w-7xl mx-auto p-4 space-y-6">
 
-    <!-- VIEW 1: DASHBOARD TV -->
+    <!-- VIEW 1: DASHBOARD TV (STATIK) -->
     <section id="viewTv" class="space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center">
@@ -103,7 +104,6 @@
         <div class="p-4 bg-slate-800/50 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
           <div class="flex items-center gap-3">
             <h2 class="font-bold text-slate-200">Paparan Jadual Relief Harian</h2>
-            <!-- PAPARAN TARIKH DAN HARI DI TV DASHBOARD -->
             <span id="tvScheduleDate" class="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
               📅 Tarikh: -
             </span>
@@ -138,6 +138,57 @@
       </div>
     </section>
 
+    <!-- VIEW 1B: TV SLIDE SHOW (BERGERAK AUTO - 7 BARIS PER SLAID) -->
+    <section id="viewTvSlide" class="hidden space-y-6">
+      <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+        
+        <!-- HEADER SLIDE SHOW -->
+        <div class="p-3.5 bg-slate-800/80 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">🎞️</span>
+            <div>
+              <h2 class="font-bold text-slate-200 text-base">Paparan Slide Jadual Relief</h2>
+              <p id="tvSlideDate" class="text-xs text-blue-400 font-semibold">📅 Tarikh: -</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <span id="slideIndicator" class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-lg text-xs font-bold">
+              Slaid 1 / 1
+            </span>
+            <div class="flex gap-1">
+              <button onclick="prevSlide()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-lg text-xs font-bold transition">◀</button>
+              <button onclick="nextSlide()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-lg text-xs font-bold transition">▶</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROGRESS BAR ANIMASI SLIDE -->
+        <div class="w-full bg-slate-900 h-1">
+          <div id="slideProgressBar" class="bg-blue-500 h-1 w-0 transition-all duration-100 ease-linear"></div>
+        </div>
+
+        <!-- JADUAL SLIDE SHOW (7 BARIS OPTIMISED) -->
+        <div class="overflow-hidden">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-900/80 text-slate-300 text-xs uppercase tracking-wider border-b border-slate-700">
+                <th class="py-2.5 px-6">Waktu</th>
+                <th class="py-2.5 px-6">Guru Cuti (Alasan)</th>
+                <th class="py-2.5 px-6">Kelas</th>
+                <th class="py-2.5 px-6">Subjek</th>
+                <th class="py-2.5 px-6">Guru Ganti</th>
+                <th class="py-2.5 px-6 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="tvSlideTableBody" class="divide-y divide-slate-700/50 text-sm transition-opacity duration-300 opacity-100">
+              <tr><td colspan="6" class="py-10 text-center text-slate-500">Tiada data untuk paparan slide.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- VIEW 2: MOBILE CIKGU -->
     <section id="viewMobile" class="hidden space-y-6 max-w-lg mx-auto">
       <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
@@ -150,13 +201,11 @@
         <select id="teacherSelect" onchange="renderMobileCard()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-semibold focus:outline-none focus:border-blue-500">
           <option value="">-- Pilih Nama Cikgu --</option>
         </select>
-        <!-- PAPARAN TARIKH DI MOBILE -->
         <div id="mobileScheduleDate" class="text-center text-xs font-bold text-blue-400 bg-blue-500/10 p-2 rounded-xl border border-blue-500/20">
           📅 Jadual Relief Tarikh: -
         </div>
       </div>
 
-      <!-- BAHAGIAN AKSI PUKAL & PDF INDIVIDU -->
       <div id="bulkActionContainer" class="hidden space-y-3 bg-slate-800 border border-blue-500/30 p-4 rounded-2xl">
         <div class="flex flex-col gap-2">
           <button onclick="confirmAllBulk()" id="btnBulkConfirm" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition flex justify-center items-center gap-2 text-sm">
@@ -314,6 +363,13 @@
     let currentSchool = localStorage.getItem('ERELIEF_SCHOOL_NAME') || 'Nama Sekolah';
     let realtimeChannel = null;
 
+    // VARIABLE UNTUK SLIDE SHOW (7 BARIS PER SLAID)
+    let currentSlideIndex = 0;
+    const ROWS_PER_SLIDE = 7;
+    let slideTimer = null;
+    let progressTimer = null;
+    const SLIDE_DURATION_MS = 6000;
+
     document.addEventListener('DOMContentLoaded', async () => {
       updateSchoolDisplay();
       await fetchCloudData();
@@ -327,7 +383,6 @@
       } else {
         reliefDatabase = data || [];
 
-        // Dapatkan tarikh daripada item pertama jika wujud
         if (reliefDatabase.length > 0 && reliefDatabase[0].tarikh_hari) {
           activeTarikhHeader = reliefDatabase[0].tarikh_hari;
           localStorage.setItem('ERELIEF_TARIKH', activeTarikhHeader);
@@ -335,6 +390,7 @@
 
         updateDateDisplays();
         renderTvDashboard();
+        renderTvSlide();
         populateTeacherDropdown();
         renderMobileCard();
         renderAdminEditor();
@@ -343,10 +399,12 @@
 
     function updateDateDisplays() {
       const tEl = document.getElementById('tvScheduleDate');
+      const tsEl = document.getElementById('tvSlideDate');
       const mEl = document.getElementById('mobileScheduleDate');
       const aEl = document.getElementById('adminScheduleDate');
 
       if (tEl) tEl.innerText = `📅 Tarikh: ${activeTarikhHeader}`;
+      if (tsEl) tsEl.innerText = `📅 Tarikh: ${activeTarikhHeader}`;
       if (mEl) mEl.innerText = `📅 Jadual Relief Tarikh: ${activeTarikhHeader}`;
       if (aEl) aEl.innerText = `Tarikh: ${activeTarikhHeader}`;
     }
@@ -424,25 +482,35 @@
 
     function switchTab(tabName) {
       document.getElementById('viewTv').classList.add('hidden');
+      document.getElementById('viewTvSlide').classList.add('hidden');
       document.getElementById('viewMobile').classList.add('hidden');
       document.getElementById('viewAdmin').classList.add('hidden');
 
-      document.getElementById('tabBtnTv').className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold";
-      document.getElementById('tabBtnMobile').className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold";
-      document.getElementById('tabBtnAdmin').className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold";
+      document.getElementById('tabBtnTv').className = "px-3 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold";
+      document.getElementById('tabBtnTvSlide').className = "px-3 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold";
+      document.getElementById('tabBtnMobile').className = "px-3 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold";
+      document.getElementById('tabBtnAdmin').className = "px-3 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold";
+
+      stopSlideShow();
 
       if(tabName === 'tv') {
         document.getElementById('viewTv').classList.remove('hidden');
-        document.getElementById('tabBtnTv').className = "px-4 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
+        document.getElementById('tabBtnTv').className = "px-3 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
         renderTvDashboard();
+      } else if(tabName === 'tvslide') {
+        document.getElementById('viewTvSlide').classList.remove('hidden');
+        document.getElementById('tabBtnTvSlide').className = "px-3 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
+        currentSlideIndex = 0;
+        renderTvSlide();
+        startSlideShow();
       } else if(tabName === 'mobile') {
         document.getElementById('viewMobile').classList.remove('hidden');
-        document.getElementById('tabBtnMobile').className = "px-4 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
+        document.getElementById('tabBtnMobile').className = "px-3 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
         populateTeacherDropdown();
         renderMobileCard();
       } else if(tabName === 'admin') {
         document.getElementById('viewAdmin').classList.remove('hidden');
-        document.getElementById('tabBtnAdmin').className = "px-4 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
+        document.getElementById('tabBtnAdmin').className = "px-3 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
         renderAdminEditor();
       }
     }
@@ -478,9 +546,8 @@
 
       let parsedData = [];
       let headerRowIndex = -1;
-      let extractedDate = "Khamis, 1 Oktober 2026"; // Nilai Laluan Bawaan
+      let extractedDate = "Khamis, 1 Oktober 2026";
 
-      // Cari tarikh pada baris paling atas (0-2)
       for (let i = 0; i < Math.min(rows.length, 3); i++) {
         if (rows[i] && rows[i][0] && String(rows[i][0]).trim() !== '') {
           let str = String(rows[i][0]).trim();
@@ -543,7 +610,7 @@
             );
 
             fetchCloudData();
-            switchTab('tv');
+            switchTab('tvslide');
           } else {
             alert("Ralat memuat naik ke Cloud: " + error.message);
           }
@@ -613,6 +680,95 @@
       document.getElementById('statConfirmed').textContent = confirmedCount;
       let rate = reliefDatabase.length > 0 ? Math.round((confirmedCount / reliefDatabase.length) * 100) : 0;
       document.getElementById('statRate').textContent = `${rate}%`;
+    }
+
+    // FUNGSI KHAS: SLIDE SHOW UNTUK TV (7 BARIS OPTIMISED)
+    function renderTvSlide() {
+      const tbody = document.getElementById('tvSlideTableBody');
+      const indicator = document.getElementById('slideIndicator');
+      if(!tbody) return;
+
+      if(reliefDatabase.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-slate-500">Tiada data untuk paparan slide. Buka Admin Panel untuk muat naik.</td></tr>`;
+        if(indicator) indicator.innerText = `Slaid 0 / 0`;
+        return;
+      }
+
+      const totalSlides = Math.ceil(reliefDatabase.length / ROWS_PER_SLIDE);
+      if (currentSlideIndex >= totalSlides) currentSlideIndex = 0;
+      if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1;
+
+      if(indicator) indicator.innerText = `Slaid ${currentSlideIndex + 1} / ${totalSlides}`;
+
+      const startIndex = currentSlideIndex * ROWS_PER_SLIDE;
+      const slideItems = reliefDatabase.slice(startIndex, startIndex + ROWS_PER_SLIDE);
+
+      tbody.classList.add('opacity-0');
+
+      setTimeout(() => {
+        tbody.innerHTML = "";
+        slideItems.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.className = item.status === "Confirmed" ? "hover:bg-slate-700/30 border-b border-slate-700/40" : "bg-amber-500/5 hover:bg-amber-500/10 border-b border-slate-700/40";
+          tr.innerHTML = `
+            <td class="py-3 px-6 font-bold text-blue-400">${item.waktu}</td>
+            <td class="py-3 px-6 text-slate-200 font-semibold">${item.guru_cuti} <span class="text-xs text-slate-400 block">(${item.alasan})</span></td>
+            <td class="py-3 px-6 font-bold text-white text-base">${item.kelas}</td>
+            <td class="py-3 px-6"><span class="px-2.5 py-1 bg-slate-700 text-slate-200 rounded-lg text-xs font-bold">${item.subjek}</span></td>
+            <td class="py-3 px-6 font-bold ${item.status === 'Confirmed' ? 'text-emerald-300' : 'text-amber-300'}">${item.guru_ganti}</td>
+            <td class="py-3 px-6 text-center">
+              ${item.status === 'Confirmed' 
+                ? `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">✓ Disahkan (${item.confirmed_time})</span>`
+                : `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">⏳ Belum Sah</span>`}
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+        tbody.classList.remove('opacity-0');
+      }, 200);
+    }
+
+    function startSlideShow() {
+      stopSlideShow();
+      resetProgressBar();
+
+      slideTimer = setInterval(() => {
+        currentSlideIndex++;
+        renderTvSlide();
+        resetProgressBar();
+      }, SLIDE_DURATION_MS);
+    }
+
+    function stopSlideShow() {
+      if(slideTimer) clearInterval(slideTimer);
+      if(progressTimer) clearInterval(progressTimer);
+      slideTimer = null;
+      progressTimer = null;
+    }
+
+    function resetProgressBar() {
+      const pBar = document.getElementById('slideProgressBar');
+      if(!pBar) return;
+      
+      pBar.style.transition = 'none';
+      pBar.style.width = '0%';
+
+      setTimeout(() => {
+        pBar.style.transition = `width ${SLIDE_DURATION_MS}ms linear`;
+        pBar.style.width = '100%';
+      }, 50);
+    }
+
+    function nextSlide() {
+      currentSlideIndex++;
+      renderTvSlide();
+      startSlideShow();
+    }
+
+    function prevSlide() {
+      currentSlideIndex--;
+      renderTvSlide();
+      startSlideShow();
     }
 
     function populateTeacherDropdown() {
