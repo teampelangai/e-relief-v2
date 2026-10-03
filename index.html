@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Relief System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Pustaka html2pdf untuk penjanaan fail PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- OneSignal Web Push SDK v16 -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "2fb53561-b4ba-4d25-a42c-88ea76ce83c8",
+        allowLocalhostAsSecureOrigin: true,
+        serviceWorkerParam: { scope: "/dinamik/" },
+        serviceWorkerPath: "sw.js"
+      });
+
+      OneSignal.User.PushSubscription.addEventListener("change", function(event) {
+        if (event.current.id) {
+          alert("🎉 BERJAYA TERTINGGI!\nPeranti anda telah berdaftar.\nID Subscription: " + event.current.id);
+        }
+      });
+    });
+
+    async function requestNotificationPermission() {
+      if (!window.OneSignalDeferred) return;
+
+      OneSignalDeferred.push(async function(OneSignal) {
+        try {
+          await OneSignal.Notifications.requestPermission();
+          await OneSignal.User.PushSubscription.optIn();
+          
+          const currentId = OneSignal.User.PushSubscription.id;
+          if (currentId) {
+            alert("✅ PERANTI SUDAH BERDAFTAR!\nID: " + currentId);
+          } else {
+            alert("🔄 Menghantar token peranti ke OneSignal...");
+          }
+        } catch (err) {
+          alert("❌ Ralat: " + err.message);
+        }
+      });
+    }
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+
+  <!-- Header / Navigation -->
+  <header class="bg-slate-800/80 backdrop-blur border-b border-slate-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <span class="text-2xl">📢</span>
+        <div>
+          <h1 class="font-black text-xl bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">E-RELIEF</h1>
+          <p class="text-xs text-slate-400 font-medium" id="displaySchoolName">| Sekolah</p>
+        </div>
+      </div>
+      <div class="flex space-x-1 bg-slate-900/60 p-1 rounded-xl border border-slate-700">
+        <button id="tabBtnTv" onclick="switchTab('tv')" class="px-4 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold">🖥️️ TV</button>
+        <button id="tabBtnMobile" onclick="switchTab('mobile')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">📱 Mobile</button>
+        <button id="tabBtnAdmin" onclick="switchTab('admin')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">⚙️ Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto p-4 space-y-6">
+
+    <!-- VIEW 1: DASHBOARD TV -->
+    <section id="viewTv" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center">
+          <div>
+            <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Jumlah Waktu Ganti</p>
+            <p class="text-3xl font-black text-blue-400 mt-1" id="statTotal">0</p>
+          </div>
+          <span class="text-3xl">📋</span>
+        </div>
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center">
+          <div>
+            <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Telah Disahkan</p>
+            <p class="text-3xl font-black text-emerald-400 mt-1" id="statConfirmed">0</p>
+          </div>
+          <span class="text-3xl">✅</span>
+        </div>
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center">
+          <div>
+            <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Kadar Pengesahan</p>
+            <p class="text-3xl font-black text-indigo-400 mt-1" id="statRate">0%</p>
+          </div>
+          <span class="text-3xl">📊</span>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+        <div class="p-4 bg-slate-800/50 border-b border-slate-700 flex justify-between items-center">
+          <h2 class="font-bold text-slate-200">Paparan Jadual Relief Harian</h2>
+          <span class="animate-pulse flex h-3 w-3 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+          </span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-900/60 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-700">
+                <th class="py-3 px-6">Waktu</th>
+                <th class="py-3 px-6">Guru Cuti (Alasan)</th>
+                <th class="py-3 px-6">Kelas</th>
+                <th class="py-3 px-6">Subjek</th>
+                <th class="py-3 px-6">Guru Ganti</th>
+                <th class="py-3 px-6 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="tvTableBody" class="divide-y divide-slate-700/50 text-sm">
+              <tr><td colspan="6" class="py-8 text-center text-slate-500">Tiada data. Buka Admin Panel untuk muat naik.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: MOBILE CIKGU -->
+    <section id="viewMobile" class="hidden space-y-6 max-w-lg mx-auto">
+      <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+        <div class="flex justify-between items-center">
+          <label class="block text-xs font-bold text-slate-400 uppercase">Pilih Nama Anda:</label>
+          <button onclick="requestNotificationPermission()" class="text-xs bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded-lg text-white font-bold transition flex items-center gap-1">
+            🔔 Aktifkan Push Notification
+          </button>
+        </div>
+        <select id="teacherSelect" onchange="renderMobileCard()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-semibold focus:outline-none focus:border-blue-500">
+          <option value="">-- Pilih Nama Cikgu --</option>
+        </select>
+      </div>
+
+      <!-- BAHAGIAN AKSI PUKAL & PDF -->
+      <div id="bulkActionContainer" class="hidden space-y-3 bg-slate-800 border border-blue-500/30 p-4 rounded-2xl">
+        <div class="flex flex-col gap-2">
+          <button onclick="confirmAllBulk()" id="btnBulkConfirm" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition flex justify-center items-center gap-2 text-sm">
+            ✅ SAHKAN SEMUA PUKAL & PAPAR PDF
+          </button>
+          <button onclick="generatePDF()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition flex justify-center items-center gap-2 text-xs">
+            📄 Muat Turun / Cetak Slip PDF
+          </button>
+        </div>
+      </div>
+
+      <div id="mobileReliefCards" class="space-y-4">
+        <div class="text-center text-slate-500 text-xs py-6">Sila pilih nama cikgu di atas.</div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: ADMIN PANEL -->
+    <section id="viewAdmin" class="hidden space-y-6">
+      <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-4">
+        <h2 class="font-bold text-lg text-white">⚙️ Tetapan Sekolah & Muat Naik Excel</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-400">Nama Sekolah</label>
+            <div class="flex gap-2">
+              <input type="text" id="schoolNameInput" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white w-full focus:outline-none" placeholder="Masukkan Nama Sekolah">
+              <button onclick="saveSchoolName()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl text-xs font-bold text-white transition">Simpan</button>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-400">Muat Naik Fail Jadual Relief (.XLSX)</label>
+            <div class="flex gap-2">
+              <input type="file" id="fileInput" accept=".xlsx, .xls" class="bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-300 w-full">
+              <button onclick="processUploadedFile()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-xs font-bold text-white transition whitespace-nowrap">Process & Sync</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="adminStatus" class="text-xs font-semibold text-amber-400"></div>
+
+        <div class="pt-4 border-t border-slate-700 flex justify-between items-center">
+          <button onclick="hantarNotifikasiRelief('📢 UJIAN NOTIFIKASI', 'Sistem E-Relief berfungsi dengan baik!')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">
+            🔔 Hantar Ujian Notifikasi
+          </button>
+          <button onclick="clearAllData()" class="bg-rose-600/20 text-rose-400 border border-rose-600/30 hover:bg-rose-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition">Padam Semua Data Cloud</button>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+        <div class="p-4 border-b border-slate-700 font-bold text-slate-200 text-sm">Senarai Rekod di Cloud Database</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/60 text-slate-400 uppercase border-b border-slate-700">
+                <th class="p-3">Waktu</th>
+                <th class="p-3">Guru Cuti</th>
+                <th class="p-3">Kelas</th>
+                <th class="p-3">Subjek</th>
+                <th class="p-3">Guru Ganti</th>
+                <th class="p-3 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody" class="divide-y divide-slate-700/50">
+              <tr><td colspan="6" class="py-6 text-center text-slate-500">Tiada rekod wujud di Cloud. Sila muat naik.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- TEMPLATE HIDDEN UNTUK JANA PDF PRINTABLE SLIP -->
+  <div id="pdfTemplate" class="hidden bg-white text-slate-900 p-8 font-sans max-w-2xl mx-auto">
+    <div class="text-center border-b-2 border-slate-800 pb-4 mb-4">
+      <h2 class="text-xl font-bold uppercase tracking-wide" id="pdfSchoolName">NAMA SEKOLAH</h2>
+      <h3 class="text-base font-semibold text-slate-700">SLIP / LAMPIRAN JADUAL GANTI (RELIEF)</h3>
+      <p class="text-xs text-slate-500 mt-1">Tarikh Cetakan: <span id="pdfPrintDate"></span></p>
+    </div>
+
+    <div class="mb-4 text-sm space-y-1">
+      <p><strong>Nama Guru Ganti:</strong> <span id="pdfTeacherName" class="text-blue-800 font-bold"></span></p>
+      <p><strong>Jumlah Waktu Relief:</strong> <span id="pdfTotalCount"></span> kelas</p>
+    </div>
+
+    <table class="w-full border-collapse border border-slate-400 text-xs mb-6">
+      <thead>
+        <tr class="bg-slate-100 border-b border-slate-400">
+          <th class="border border-slate-400 p-2 text-left">Waktu</th>
+          <th class="border border-slate-400 p-2 text-left">Kelas</th>
+          <th class="border border-slate-400 p-2 text-left">Subjek</th>
+          <th class="border border-slate-400 p-2 text-left">Guru Diganti (Alasan)</th>
+          <th class="border border-slate-400 p-2 text-center">Masa Disahkan</th>
+        </tr>
+      </thead>
+      <tbody id="pdfTableBody">
+      </tbody>
+    </table>
+
+    <div class="mt-8 pt-4 border-t border-slate-300 flex justify-between text-xs text-slate-500">
+      <div>* Dokumen ini dijanakan secara automatik oleh Sistem E-Relief.</div>
+      <div>Pengesahan Digital Done</div>
+    </div>
+  </div>
+
+  <script>
+    //=== 1. KONFIGURASI SUPABASE & ONESIGNAL ===
+    const SUPABASE_URL = 'https://jzqirxombshcmbatbmso.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6cWlyeG9tYnNoY21iYXRibXNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3NzI0MDEsImV4cCI6MjEwNjM0ODQwMX0.MXAlafZGrBOjRMYCqWU4lVO2mYf6Au0kktiQOLlcO68';
+    
+    const ONESIGNAL_APP_ID = "2fb53561-b4ba-4d25-a42c-88ea76ce83c8";
+    const ONESIGNAL_REST_API_KEY = "os_v2_app_f62tkynuxjgsljbmrdvhntudzafzdl3y7niuagvgt5ybrqkt7biorixqcbbz4dfqurauz5wnn7fflfs47vqwpixnnfovk4zodkbnaci";
+
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let reliefDatabase = [];
+    let currentSchool = localStorage.getItem('ERELIEF_SCHOOL_NAME') || 'Nama Sekolah';
+    let realtimeChannel = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      updateSchoolDisplay();
+      await fetchCloudData();
+      listenToRealtime();
+    });
+
+    async function fetchCloudData() {
+      const { data, error } = await db.from('relief_schedules').select('*').order('id', { ascending: true });
+      if (error) {
+        console.error("Error fetching data:", error);
+      } else {
+        reliefDatabase = data || [];
+        renderTvDashboard();
+        populateTeacherDropdown();
+        renderMobileCard();
+        renderAdminEditor();
+      }
+    }
+
+    function listenToRealtime() {
+      if (realtimeChannel) db.removeChannel(realtimeChannel);
+
+      realtimeChannel = db.channel('public:relief_schedules')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'relief_schedules' }, () => {
+          fetchCloudData();
+        })
+        .subscribe();
+    }
+
+    function saveSchoolName() {
+      const val = document.getElementById('schoolNameInput').value.trim();
+      if(val) {
+        currentSchool = val;
+        localStorage.setItem('ERELIEF_SCHOOL_NAME', val);
+        updateSchoolDisplay();
+        alert("Nama sekolah berjaya dikemaskini!");
+      }
+    }
+
+    function updateSchoolDisplay() {
+      const el = document.getElementById('displaySchoolName');
+      if(el) el.innerText = `| ${currentSchool}`;
+      const inputEl = document.getElementById('schoolNameInput');
+      if(inputEl) inputEl.value = currentSchool;
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('Service Worker Registered'))
+        .catch(err => console.log('SW Registration error', err));
+    }
+
+    // Fungsi Khas Penghantaran Notifikasi REST API
+    async function hantarNotifikasiRelief(tajuk, mesej) {
+      console.log("Memulakan penghantaran notifikasi...");
+
+      const payload = {
+        app_id: ONESIGNAL_APP_ID,
+        included_segments: ['Total Subscriptions'],
+        headings: { en: tajuk || "📢 JADUAL RELIEF BAHARU", ms: tajuk || "📢 JADUAL RELIEF BAHARU" },
+        contents: { en: mesej || "Jadual ganti / relief telah dikemas kini.", ms: mesej || "Jadual ganti / relief telah dikemas kini." },
+        url: "https://teampelangai.github.io/dinamik/"
+      };
+
+      const proxyUrl = 'https://onesignal-proxy.teampelangai.workers.dev/';
+
+      try {
+        const response = await fetch(proxyUrl, {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Key ${ONESIGNAL_REST_API_KEY}`,
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        console.log("Respon OneSignal:", data);
+
+        if (data.id) {
+          alert("🚀 BERJAYA! Mesej notifikasi telah dihantar ke pelayan OneSignal.\nID: " + data.id);
+        } else if (data.errors) {
+          alert("⚠️️ Ralat OneSignal API:\n" + JSON.stringify(data.errors));
+        }
+      } catch (err) {
+        console.error("Ralat Penghantaran:", err);
+        alert("❌ Ralat Sambungan: " + err.message);
+      }
+    }
+
+    function switchTab(tabName) {
+      document.getElementById('viewTv').classList.add('hidden');
+      document.getElementById('viewMobile').classList.add('hidden');
+      document.getElementById('viewAdmin').classList.add('hidden');
+
+      document.getElementById('tabBtnTv').className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold";
+      document.getElementById('tabBtnMobile').className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold";
+      document.getElementById('tabBtnAdmin').className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold";
+
+      if(tabName === 'tv') {
+        document.getElementById('viewTv').classList.remove('hidden');
+        document.getElementById('tabBtnTv').className = "px-4 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
+        renderTvDashboard();
+      } else if(tabName === 'mobile') {
+        document.getElementById('viewMobile').classList.remove('hidden');
+        document.getElementById('tabBtnMobile').className = "px-4 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
+        populateTeacherDropdown();
+        renderMobileCard();
+      } else if(tabName === 'admin') {
+        document.getElementById('viewAdmin').classList.remove('hidden');
+        document.getElementById('tabBtnAdmin').className = "px-4 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
+        renderAdminEditor();
+      }
+    }
+
+    async function clearAllData() {
+      if (confirm("Adakah anda pasti mahu memadam SEMUA data di Cloud (Database)?")) {
+        const { error } = await db.from('relief_schedules').delete().gt('id', 0);
+        if (!error) {
+          document.getElementById('adminStatus').textContent = "Semua data berjaya dipadamkan daripada Cloud!";
+          fetchCloudData();
+        } else {
+          alert("Gagal memadam data: " + error.message);
+        }
+      }
+    }
+
+    async function processUploadedFile() {
+      const input = document.getElementById('fileInput');
+      const statusDiv = document.getElementById('adminStatus');
+      if (!input.files[0]) {
+        alert("Sila pilih fail .xlsx terlebih dahulu!");
+        return;
+      }
+
+      const file = input.files[0];
+      statusDiv.textContent = "Membaca & Memproses .XLSX...";
+
+      const arrayBuffer = await file.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const sheetName = workbook.SheetNames.includes('Penggantian') ? 'Penggantian' : workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      let parsedData = [];
+      let headerRowIndex = -1;
+
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i] && rows[i].some(cell => String(cell).trim() === 'Guru' || String(cell).trim() === 'Gantian')) {
+          headerRowIndex = i;
+          break;
+        }
+      }
+
+      if (headerRowIndex !== -1) {
+        const headers = rows[headerRowIndex].map(h => String(h).trim());
+        const guruIdx = headers.indexOf('Guru');
+        const alasanIdx = headers.indexOf('Alasan');
+        const waktuIdx = headers.indexOf('Waktu');
+        const subjekIdx = headers.indexOf('Subjek');
+        const kelasIdx = headers.indexOf('Kelas');
+        const gantianIdx = headers.indexOf('Gantian');
+
+        for (let r = headerRowIndex + 1; r < rows.length; r++) {
+          const row = rows[r];
+          if (row && row[waktuIdx] !== undefined && row[waktuIdx] !== null && String(row[waktuIdx]).trim() !== '') {
+            let wNum = String(row[waktuIdx]).trim();
+            let alsn = strVal(row[alasanIdx]);
+            if (alsn.includes("CUTI TANPA REKOD")) alsn = "CTR";
+
+            parsedData.push({
+              waktu: `Waktu ${wNum}`,
+              guru_cuti: strVal(row[guruIdx]),
+              alasan: alsn || "CTR",
+              kelas: strVal(row[kelasIdx]),
+              subjek: strVal(row[subjekIdx]),
+              guru_ganti: strVal(row[gantianIdx]),
+              status: "Pending",
+              confirmed_time: ""
+            });
+          }
+        }
+
+        if (parsedData.length > 0) {
+          await db.from('relief_schedules').delete().gt('id', 0);
+          const { error } = await db.from('relief_schedules').insert(parsedData);
+
+          if (!error) {
+            statusDiv.textContent = `Berjaya! ${parsedData.length} data dihantar ke Cloud.`;
+            
+            await hantarNotifikasiRelief(
+              "📢 JADUAL RELIEF BAHARU",
+              `Jadual relief harian (${parsedData.length} waktu ganti) telah dikemaskini. Sila semak tugasan anda!`
+            );
+
+            fetchCloudData();
+            switchTab('tv');
+          } else {
+            alert("Ralat memuat naik ke Cloud: " + error.message);
+          }
+        }
+      }
+    }
+
+    function strVal(v) {
+      return v !== undefined && v !== null ? String(v).trim() : "-";
+    }
+
+    function renderAdminEditor() {
+      const tbody = document.getElementById('adminTableBody');
+      tbody.innerHTML = "";
+
+      if(reliefDatabase.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-500">Tiada rekod wujud di Cloud. Sila muat naik.</td></tr>`;
+        return;
+      }
+
+      reliefDatabase.forEach((item) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="p-3">${item.waktu}</td>
+          <td class="p-3">${item.guru_cuti}</td>
+          <td class="p-3">${item.kelas}</td>
+          <td class="p-3">${item.subjek}</td>
+          <td class="p-3">${item.guru_ganti}</td>
+          <td class="p-3 text-center">${item.status}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderTvDashboard() {
+      const tbody = document.getElementById('tvTableBody');
+      tbody.innerHTML = "";
+
+      if(reliefDatabase.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-500">Tiada data. Buka Admin Panel untuk muat naik.</td></tr>`;
+        return;
+      }
+
+      let confirmedCount = 0;
+
+      reliefDatabase.forEach(item => {
+        if(item.status === "Confirmed") confirmedCount++;
+
+        const tr = document.createElement('tr');
+        tr.className = item.status === "Confirmed" ? "hover:bg-slate-700/30" : "bg-amber-500/5 hover:bg-amber-500/10";
+        tr.innerHTML = `
+          <td class="py-4 px-6 font-bold text-blue-400">${item.waktu}</td>
+          <td class="py-4 px-6 text-slate-300 font-semibold">${item.guru_cuti} <span class="text-xs text-slate-500 block">(${item.alasan})</span></td>
+          <td class="py-4 px-6 font-bold text-white">${item.kelas}</td>
+          <td class="py-4 px-6"><span class="px-2.5 py-1 bg-slate-700 text-slate-200 rounded text-xs font-bold">${item.subjek}</span></td>
+          <td class="py-4 px-6 font-bold ${item.status === 'Confirmed' ? 'text-emerald-300' : 'text-amber-300'}">${item.guru_ganti}</td>
+          <td class="py-4 px-6 text-center">
+            ${item.status === 'Confirmed' 
+              ? `<span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">✓ Disahkan (${item.confirmed_time})</span>`
+              : `<span class="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">⏳ Belum Sah</span>`}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('statTotal').textContent = reliefDatabase.length;
+      document.getElementById('statConfirmed').textContent = confirmedCount;
+      let rate = reliefDatabase.length > 0 ? Math.round((confirmedCount / reliefDatabase.length) * 100) : 0;
+      document.getElementById('statRate').textContent = `${rate}%`;
+    }
+
+    function populateTeacherDropdown() {
+      const select = document.getElementById('teacherSelect');
+      const selectedVal = select.value;
+      select.innerHTML = `<option value="">-- Pilih Nama Cikgu --</option>`;
+      
+      let teachers = [...new Set(reliefDatabase.map(d => d.guru_ganti))];
+      teachers.forEach(t => {
+        if(t && t !== "Perlu Ditanda" && t !== "-") {
+          select.innerHTML += `<option value="${t}" ${t === selectedVal ? 'selected' : ''}>${t}</option>`;
+        }
+      });
+    }
+
+    function renderMobileCard() {
+      const selectedTeacher = document.getElementById('teacherSelect').value;
+      const container = document.getElementById('mobileReliefCards');
+      const bulkContainer = document.getElementById('bulkActionContainer');
+      container.innerHTML = "";
+
+      if(!selectedTeacher) {
+        bulkContainer.classList.add('hidden');
+        container.innerHTML = `<div class="text-center text-slate-500 text-xs py-6">Sila pilih nama cikgu di atas.</div>`;
+        return;
+      }
+
+      let teacherItems = reliefDatabase.filter(d => d.guru_ganti === selectedTeacher);
+
+      if(teacherItems.length === 0) {
+        bulkContainer.classList.add('hidden');
+        container.innerHTML = `<div class="text-center text-emerald-400 text-sm py-6 bg-slate-800 rounded-2xl border border-slate-700">🎉 Tiada jadual relief untuk anda hari ini!</div>`;
+        return;
+      }
+
+      // Tunjukkan butang aksi pukal jika ada jadual
+      bulkContainer.classList.remove('hidden');
+
+      teacherItems.forEach(item => {
+        let isConfirmed = item.status === "Confirmed";
+        let card = document.createElement('div');
+        card.className = "bg-slate-800 border border-slate-700 p-5 rounded-2xl space-y-3";
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-lg border border-blue-500/20">${item.waktu}</span>
+            <span class="text-xs font-bold text-slate-400">Kelas: ${item.kelas}</span>
+          </div>
+          <div>
+            <div class="text-lg font-black text-white">Subjek: ${item.subjek}</div>
+            <div class="text-xs text-slate-400">Guru Diganti: ${item.guru_cuti} (${item.alasan})</div>
+          </div>
+          <button onclick="confirmRelief(${item.id})" ${isConfirmed ? 'disabled' : ''} 
+            class="w-full py-3 rounded-xl font-bold transition flex justify-center items-center gap-2 ${isConfirmed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-default' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30'}">
+            ${isConfirmed ? `✓ Telah Disahkan (${item.confirmed_time})` : '🟢 SAHKAN TERIMA JADUAL'}
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function confirmRelief(id) {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const { error } = await db
+        .from('relief_schedules')
+        .update({ status: 'Confirmed', confirmed_time: timeStr })
+        .eq('id', id);
+
+      if (error) {
+        alert("Gagal mengesahkan: " + error.message);
+      } else {
+        await fetchCloudData();
+      }
+    }
+
+    // FUNGSI KHAS: PENGESAHAN SEMUA PUKAL (BULK CONFIRM)
+    async function confirmAllBulk() {
+      const selectedTeacher = document.getElementById('teacherSelect').value;
+      if (!selectedTeacher) return;
+
+      const unconfirmedItems = reliefDatabase.filter(d => d.guru_ganti === selectedTeacher && d.status !== 'Confirmed');
+      
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (unconfirmedItems.length > 0) {
+        const idsToUpdate = unconfirmedItems.map(item => item.id);
+        const { error } = await db
+          .from('relief_schedules')
+          .update({ status: 'Confirmed', confirmed_time: timeStr })
+          .in('id', idsToUpdate);
+
+        if (error) {
+          alert("Gagal mengesahkan secara pukal: " + error.message);
+          return;
+        }
+      }
+
+      await fetchCloudData();
+      // Selepas sahkan pukal, terus jana dan papar PDF
+      generatePDF();
+    }
+
+    // FUNGSI KHAS: JANA LAMPIRAN SLIP RELIEF PDF
+    function generatePDF() {
+      const selectedTeacher = document.getElementById('teacherSelect').value;
+      if (!selectedTeacher) {
+        alert("Sila pilih nama cikgu terlebih dahulu!");
+        return;
+      }
+
+      const teacherItems = reliefDatabase.filter(d => d.guru_ganti === selectedTeacher);
+      if (teacherItems.length === 0) {
+        alert("Tiada rekod jadual relief untuk cikgu ini.");
+        return;
+      }
+
+      // Isi maklumat dalam template PDF
+      document.getElementById('pdfSchoolName').innerText = currentSchool;
+      document.getElementById('pdfTeacherName').innerText = selectedTeacher;
+      document.getElementById('pdfTotalCount').innerText = teacherItems.length;
+      document.getElementById('pdfPrintDate').innerText = new Date().toLocaleDateString('ms-MY', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+
+      const pdfTbody = document.getElementById('pdfTableBody');
+      pdfTbody.innerHTML = "";
+
+      teacherItems.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-300";
+        tr.innerHTML = `
+          <td class="border border-slate-300 p-2 font-bold">${item.waktu}</td>
+          <td class="border border-slate-300 p-2 font-bold">${item.kelas}</td>
+          <td class="border border-slate-300 p-2">${item.subjek}</td>
+          <td class="border border-slate-300 p-2">${item.guru_cuti} (${item.alasan})</td>
+          <td class="border border-slate-300 p-2 text-center">${item.status === 'Confirmed' ? '✓ ' + item.confirmed_time : 'Belum Sah'}</td>
+        `;
+        pdfTbody.appendChild(tr);
+      });
+
+      const element = document.getElementById('pdfTemplate');
+      element.classList.remove('hidden');
+
+      const opt = {
+        margin:       10,
+        filename:     `Slip_Relief_${selectedTeacher.replace(/\s+/g, '_')}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(element).save().then(() => {
+        element.classList.add('hidden');
+      });
+    }
+  </script>
+</body>
+</html>
