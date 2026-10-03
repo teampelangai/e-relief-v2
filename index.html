@@ -138,7 +138,7 @@
       </div>
     </section>
 
-    <!-- VIEW 1B: TV SLIDE SHOW (BERGERAK AUTO - 7 BARIS PER SLAID) -->
+    <!-- VIEW 1B: TV SLIDE SHOW (PERLAHAN: 20 SAAT PER SLAID) -->
     <section id="viewTvSlide" class="hidden space-y-6">
       <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
         
@@ -363,12 +363,12 @@
     let currentSchool = localStorage.getItem('ERELIEF_SCHOOL_NAME') || 'Nama Sekolah';
     let realtimeChannel = null;
 
-    // VARIABLE UNTUK SLIDE SHOW (7 BARIS PER SLAID)
+    // VARIABLE UNTUK SLIDE SHOW (20 SAAT PER SLAID)
     let currentSlideIndex = 0;
     const ROWS_PER_SLIDE = 7;
     let slideTimer = null;
     let progressTimer = null;
-    const SLIDE_DURATION_MS = 6000;
+    const SLIDE_DURATION_MS = 20000; // DITUKAR KEPADA 20 SAAT
 
     document.addEventListener('DOMContentLoaded', async () => {
       updateSchoolDisplay();
