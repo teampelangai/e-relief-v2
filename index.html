@@ -268,20 +268,21 @@
         <div class="text-center text-slate-500 text-xs py-6">Sila pilih nama cikgu di atas.</div>
       </div>
     </section>
-
-    <!-- VIEW 3: ADMIN PANEL -->
+	
+	  <!-- VIEW 3: ADMIN PANEL -->
     <section id="viewAdmin" class="hidden space-y-6">
       <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-4">
         <h2 class="font-bold text-lg text-white">⚙️ Tetapan Sekolah & Muat Naik Excel</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="space-y-2">
-            <label class="text-xs font-bold text-slate-400">Nama Sekolah</label>
-            <div class="flex gap-2">
-              <input type="text" id="schoolNameInput" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white w-full focus:outline-none" placeholder="Masukkan Nama Sekolah">
-              <button onclick="saveSchoolName()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl text-xs font-bold text-white transition">Simpan</button>
-            </div>
-          </div>
+         <div class="space-y-2">
+  <label class="text-xs font-bold text-slate-400">Nama Sekolah</label>
+  <div class="flex gap-2">
+    <!-- Pastikan id="inputSchoolName" -->
+    <input type="text" id="inputSchoolName" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white w-full focus:outline-none" placeholder="Masukkan Nama Sekolah">
+    <button onclick="saveSchoolName()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl text-xs font-bold text-white transition cursor-pointer">Simpan</button>
+  </div>
+</div>
 
           <div class="space-y-2">
             <label class="text-xs font-bold text-slate-400">Muat Naik Fail Jadual Relief (.XLSX)</label>
@@ -293,7 +294,6 @@
         </div>
 
         <div id="adminStatus" class="text-xs font-semibold text-amber-400"></div>
-
         <div class="pt-4 border-t border-slate-700 flex flex-wrap justify-between items-center gap-2">
           <div class="flex gap-2">
             <button onclick="hantarNotifikasiRelief('📢 UJIAN NOTIFIKASI', 'Sistem E-Relief v2 berfungsi dengan baik!')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">
@@ -334,10 +334,10 @@
 
   </main>
 
-  <!-- TEMPLATE 1: HIDDEN UNTUK JANA PDF PRINTABLE SLIP INDIVIDU -->
+<!-- TEMPLATE 1: HIDDEN UNTUK JANA PDF PRINTABLE SLIP INDIVIDU -->
   <div id="pdfTemplate" class="hidden bg-white text-slate-900 p-8 font-sans max-w-2xl mx-auto">
     <div class="text-center border-b-2 border-slate-800 pb-4 mb-4">
-      <h2 class="text-xl font-bold uppercase tracking-wide" id="pdfSchoolName">NAMA SEKOLAH</h2>
+      <h2 class="school-name-text text-xl font-bold uppercase tracking-wide" id="pdfSchoolName">SK FELDA SG KEMAHAL</h2>
       <h3 class="text-base font-semibold text-slate-700">SLIP / LAMPIRAN JADUAL GANTI (RELIEF)</h3>
       <p class="text-xs text-slate-600 font-bold mt-1">Tarikh Relief: <span id="pdfReliefDate">-</span></p>
       <p class="text-xs text-slate-500">Tarikh Cetakan: <span id="pdfPrintDate"></span></p>
@@ -405,9 +405,9 @@
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let reliefDatabase = [];
+   let reliefDatabase = [];
     let activeTarikhHeader = localStorage.getItem('ERELIEF_TARIKH') || 'Khamis, 1 Oktober 2026';
-    let currentSchool = localStorage.getItem('ERELIEF_SCHOOL_NAME') || 'Nama Sekolah';
+    let currentSchool = localStorage.getItem('ERELIEF_SCHOOL_NAME') || 'SK FELDA SG KEMAHAL';
     let realtimeChannel = null;
 
     // VARIABLE UNTUK SLIDE SHOW & TEMA
@@ -418,8 +418,8 @@
     const SLIDE_DURATION_MS = 20000; // 20 saat
     let isTvFormalTheme = localStorage.getItem('ERELIEF_TV_THEME') !== 'moden';
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      updateSchoolDisplay();
+      document.addEventListener('DOMContentLoaded', async () => {
+      await updateSchoolDisplay(); // <--- GANTIKAN KEPADA THIS
       await fetchCloudData();
       listenToRealtime();
       applyTvThemeUI();
@@ -507,22 +507,6 @@
         .subscribe();
     }
 
-    function saveSchoolName() {
-      const val = document.getElementById('schoolNameInput').value.trim();
-      if(val) {
-        currentSchool = val;
-        localStorage.setItem('ERELIEF_SCHOOL_NAME', val);
-        updateSchoolDisplay();
-        alert("Nama sekolah berjaya dikemaskini!");
-      }
-    }
-
-    function updateSchoolDisplay() {
-      const el = document.getElementById('displaySchoolName');
-      if(el) el.innerText = `| ${currentSchool}`;
-      const inputEl = document.getElementById('schoolNameInput');
-      if(inputEl) inputEl.value = currentSchool;
-    }
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js')
@@ -1076,6 +1060,7 @@
         element.classList.add('hidden');
       });
     }
+
 // FUNGSI 2: JANA MASTER RELIEF PDF (GARISAN DIVIDER TEBAL FULL 100%)
     function generateMasterPDF() {
       if (reliefDatabase.length === 0) {
@@ -1147,6 +1132,73 @@
       html2pdf().set(opt).from(element).save().then(() => {
         element.classList.add('hidden');
       });
+    }
+
+// ==========================================
+    // TETAPAN NAMA SEKOLAH DINAMIK (SUPABASE)
+    // ==========================================
+
+    // 1. FUNGSI MUAT & KEMASKINI PAPARAN NAMA SEKOLAH
+    async function updateSchoolDisplay() {
+      try {
+        const { data, error } = await db
+          .from('school_settings')
+          .select('school_name')
+          .eq('id', 1)
+          .single();
+
+        if (data && data.school_name) {
+          currentSchool = data.school_name;
+        }
+
+        const el = document.getElementById('displaySchoolName');
+        if (el) el.innerText = `| ${currentSchool}`;
+
+        // Menggunakan schoolNameInput
+        const inputEl = document.getElementById('schoolNameInput') || document.getElementById('inputSchoolName');
+        if (inputEl) inputEl.value = currentSchool;
+
+        document.querySelectorAll('.school-name-text').forEach(item => {
+          item.innerText = currentSchool;
+        });
+
+        localStorage.setItem('ERELIEF_SCHOOL_NAME', currentSchool);
+
+      } catch (err) {
+        console.error("Ralat updateSchoolDisplay:", err);
+      }
+    }
+
+    // 2. FUNGSI SIMPAN NAMA SEKOLAH DARI ADMIN KE SUPABASE
+    async function saveSchoolName() {
+      // Menyemak kedua-dua kemungkinan ID secara fleksibel
+      const inputEl = document.getElementById('schoolNameInput') || document.getElementById('inputSchoolName');
+      if (!inputEl) {
+        alert("Ralat: Petak input nama sekolah tidak dijumpai dalam HTML!");
+        return;
+      }
+
+      const newName = inputEl.value.trim();
+      if (!newName) {
+        alert("Sila masukkan nama sekolah!");
+        return;
+      }
+
+      try {
+        const { error } = await db
+          .from('school_settings')
+          .upsert({ id: 1, school_name: newName });
+
+        if (error) {
+          alert("Gagal menyimpan ke Supabase: " + error.message);
+        } else {
+          currentSchool = newName;
+          await updateSchoolDisplay();
+          alert("Nama sekolah berjaya dikemaskini di Supabase!");
+        }
+      } catch (err) {
+        alert("Ralat semasa menyimpan nama sekolah: " + err.message);
+      }
     }
 
 // FUNGSI UNTUK PAKSA SKRIN PENUH PADA ANDROID TV / BROWSER
