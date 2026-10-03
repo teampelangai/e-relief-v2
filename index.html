@@ -154,7 +154,7 @@
       </div>
     </section>
 
-    <!-- VIEW 1B: TV SLIDE SHOW (FORMAL KORPORAT KEMAS & SERAGAM) -->
+   <!-- VIEW 1B: TV SLIDE SHOW (FORMAL KORPORAT KEMAS & SERAGAM) -->
     <section id="viewTvSlide" class="hidden space-y-4">
       <div id="slideCardContainer" class="bg-white text-slate-900 rounded-2xl border border-slate-300 overflow-hidden shadow-2xl transition-colors duration-300">
         
@@ -171,9 +171,19 @@
             </div>
           </div>
           
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 md:gap-3">
+            <!-- BUTANG SKRIN PENUH (KHAS UNTUK ANDROID TV / PC) -->
+            <button onclick="requestTvFullscreen()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow cursor-pointer">
+              🖥️ Skrin Penuh
+            </button>
+
+            <!-- BUTANG KELUAR / KEMBALI KE MENU UTAMA -->
+            <button onclick="switchTab('tv')" class="bg-rose-600 hover:bg-rose-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer">
+              ❌ Menu Utama
+            </button>
+
             <!-- SUIS TEMA (MODEN / FORMAL) -->
-            <button onclick="toggleTvTheme()" id="themeToggleBtn" class="bg-blue-800 text-white hover:bg-blue-700 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow">
+            <button onclick="toggleTvTheme()" id="themeToggleBtn" class="bg-blue-800 text-white hover:bg-blue-700 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow cursor-pointer">
               🏛️ Mod Formal
             </button>
 
@@ -181,13 +191,13 @@
               Slaid 1 / 1
             </span>
             <div class="flex gap-1">
-              <button onclick="prevSlide()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold transition">◀</button>
-              <button onclick="nextSlide()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold transition">▶</button>
+              <button onclick="prevSlide()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">◀</button>
+              <button onclick="nextSlide()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">▶</button>
             </div>
           </div>
         </div>
 
-     <!-- PROGRESS BAR ANIMASI SLIDE -->
+        <!-- PROGRESS BAR ANIMASI SLIDE -->
         <div class="w-full bg-slate-200 h-1.5" id="slideProgressBg">
           <div id="slideProgressBar" class="bg-blue-800 h-1.5 w-0 transition-all duration-100 ease-linear"></div>
         </div>
@@ -1137,6 +1147,18 @@
       html2pdf().set(opt).from(element).save().then(() => {
         element.classList.add('hidden');
       });
+    }
+
+// FUNGSI UNTUK PAKSA SKRIN PENUH PADA ANDROID TV / BROWSER
+    function requestTvFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { /* Chrome Android / TV */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
     }
   </script>
 </body>
