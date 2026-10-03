@@ -51,10 +51,10 @@
     }
   </script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased transition-colors duration-300" id="mainBody">
 
   <!-- Header / Navigation -->
-  <header class="bg-slate-800/80 backdrop-blur border-b border-slate-700 sticky top-0 z-50">
+  <header class="bg-slate-800/80 backdrop-blur border-b border-slate-700 sticky top-0 z-50" id="mainHeader">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3">
         <span class="text-2xl">📢</span>
@@ -63,7 +63,7 @@
           <p class="text-xs text-slate-400 font-medium" id="displaySchoolName">| Sekolah</p>
         </div>
       </div>
-      <div class="flex space-x-1 bg-slate-900/60 p-1 rounded-xl border border-slate-700">
+      <div class="flex space-x-1 bg-slate-900/60 p-1 rounded-xl border border-slate-700" id="tabNavBg">
         <button id="tabBtnTv" onclick="switchTab('tv')" class="px-3 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold">🖥️ TV</button>
         <button id="tabBtnTvSlide" onclick="switchTab('tvslide')" class="px-3 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">🎞️ TV Slide</button>
         <button id="tabBtnMobile" onclick="switchTab('mobile')" class="px-3 py-2 rounded-lg text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold">📱 Mobile</button>
@@ -138,51 +138,59 @@
       </div>
     </section>
 
-    <!-- VIEW 1B: TV SLIDE SHOW (PERLAHAN: 20 SAAT PER SLAID) -->
+    <!-- VIEW 1B: TV SLIDE SHOW (FORMAL KORPORAT KEMAS & SERAGAM) -->
     <section id="viewTvSlide" class="hidden space-y-6">
-      <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+      <div id="slideCardContainer" class="bg-white text-slate-900 rounded-2xl border border-slate-300 overflow-hidden shadow-2xl transition-colors duration-300">
         
-        <!-- HEADER SLIDE SHOW -->
-        <div class="p-3.5 bg-slate-800/80 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
+        <!-- HEADER SLIDE SHOW FORMAL -->
+        <div id="slideHeader" class="p-4 bg-slate-100 border-b border-slate-300 flex flex-wrap justify-between items-center gap-3">
           <div class="flex items-center gap-3">
-            <span class="text-xl">🎞️</span>
+            <span class="text-2xl">🏛️</span>
             <div>
-              <h2 class="font-bold text-slate-200 text-base">Paparan Slide Jadual Relief</h2>
-              <p id="tvSlideDate" class="text-xs text-blue-400 font-semibold">📅 Tarikh: -</p>
+              <h2 id="slideTitle" class="font-bold text-slate-900 text-lg uppercase tracking-wide">JADUAL PENGGANTIAN GURU (RELIEF)</h2>
+              <div id="tvSlideDate" class="inline-block bg-blue-800 text-white px-3 py-1 rounded-lg text-xs font-bold mt-1 shadow-sm">
+                📅 TARIKH: -
+              </div>
             </div>
           </div>
           
           <div class="flex items-center gap-3">
-            <span id="slideIndicator" class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-lg text-xs font-bold">
+            <!-- SUIS TEMA (MODEN / FORMAL) -->
+            <button onclick="toggleTvTheme()" id="themeToggleBtn" class="bg-blue-800 text-white hover:bg-blue-700 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow">
+              🏛️ Mod Formal
+            </button>
+
+            <span id="slideIndicator" class="bg-slate-200 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold">
               Slaid 1 / 1
             </span>
             <div class="flex gap-1">
-              <button onclick="prevSlide()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-lg text-xs font-bold transition">◀</button>
-              <button onclick="nextSlide()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-lg text-xs font-bold transition">▶</button>
+              <button onclick="prevSlide()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold transition">◀</button>
+              <button onclick="nextSlide()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold transition">▶</button>
             </div>
           </div>
         </div>
 
         <!-- PROGRESS BAR ANIMASI SLIDE -->
-        <div class="w-full bg-slate-900 h-1">
-          <div id="slideProgressBar" class="bg-blue-500 h-1 w-0 transition-all duration-100 ease-linear"></div>
+        <div class="w-full bg-slate-200 h-1.5" id="slideProgressBg">
+          <div id="slideProgressBar" class="bg-blue-800 h-1.5 w-0 transition-all duration-100 ease-linear"></div>
         </div>
 
-        <!-- JADUAL SLIDE SHOW (7 BARIS OPTIMISED) -->
+        <!-- JADUAL SLIDE SHOW FORMAL KORPORAT -->
         <div class="overflow-hidden">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-900/80 text-slate-300 text-xs uppercase tracking-wider border-b border-slate-700">
-                <th class="py-2.5 px-6">Waktu</th>
-                <th class="py-2.5 px-6">Guru Cuti (Alasan)</th>
-                <th class="py-2.5 px-6">Kelas</th>
-                <th class="py-2.5 px-6">Subjek</th>
-                <th class="py-2.5 px-6">Guru Ganti</th>
-                <th class="py-2.5 px-6 text-center">Status</th>
+              <!-- LAJUR HEADER BIRU KORPORAT -->
+              <tr id="slideTableHeader" class="bg-blue-800 text-white text-xs uppercase tracking-wider font-bold shadow-sm">
+                <th class="py-3 px-6 w-28">Waktu</th>
+                <th class="py-3 px-6">Guru Cuti (Alasan)</th>
+                <th class="py-3 px-6 w-36">Kelas</th>
+                <th class="py-3 px-6 w-28 text-center">Subjek</th>
+                <th class="py-3 px-6">Guru Ganti</th>
+                <th class="py-3 px-6 text-center w-48">Status</th>
               </tr>
             </thead>
-            <tbody id="tvSlideTableBody" class="divide-y divide-slate-700/50 text-sm transition-opacity duration-300 opacity-100">
-              <tr><td colspan="6" class="py-10 text-center text-slate-500">Tiada data untuk paparan slide.</td></tr>
+            <tbody id="tvSlideTableBody" class="divide-y divide-slate-200 text-sm transition-opacity duration-300 opacity-100">
+              <tr><td colspan="6" class="py-12 text-center text-slate-500 font-bold">Tiada data untuk paparan slide.</td></tr>
             </tbody>
           </table>
         </div>
@@ -363,17 +371,19 @@
     let currentSchool = localStorage.getItem('ERELIEF_SCHOOL_NAME') || 'Nama Sekolah';
     let realtimeChannel = null;
 
-    // VARIABLE UNTUK SLIDE SHOW (20 SAAT PER SLAID)
+    // VARIABLE UNTUK SLIDE SHOW & TEMA
     let currentSlideIndex = 0;
     const ROWS_PER_SLIDE = 7;
     let slideTimer = null;
     let progressTimer = null;
-    const SLIDE_DURATION_MS = 20000; // DITUKAR KEPADA 20 SAAT
+    const SLIDE_DURATION_MS = 20000; // 20 saat
+    let isTvFormalTheme = localStorage.getItem('ERELIEF_TV_THEME') !== 'moden';
 
     document.addEventListener('DOMContentLoaded', async () => {
       updateSchoolDisplay();
       await fetchCloudData();
       listenToRealtime();
+      applyTvThemeUI();
     });
 
     async function fetchCloudData() {
@@ -404,7 +414,7 @@
       const aEl = document.getElementById('adminScheduleDate');
 
       if (tEl) tEl.innerText = `📅 Tarikh: ${activeTarikhHeader}`;
-      if (tsEl) tsEl.innerText = `📅 Tarikh: ${activeTarikhHeader}`;
+      if (tsEl) tsEl.innerText = `📅 TARIKH: ${activeTarikhHeader.toUpperCase()}`;
       if (mEl) mEl.innerText = `📅 Jadual Relief Tarikh: ${activeTarikhHeader}`;
       if (aEl) aEl.innerText = `Tarikh: ${activeTarikhHeader}`;
     }
@@ -512,6 +522,47 @@
         document.getElementById('viewAdmin').classList.remove('hidden');
         document.getElementById('tabBtnAdmin').className = "px-3 py-2 rounded-lg bg-blue-600 text-white transition cursor-pointer text-xs font-bold";
         renderAdminEditor();
+      }
+    }
+
+    function toggleTvTheme() {
+      isTvFormalTheme = !isTvFormalTheme;
+      localStorage.setItem('ERELIEF_TV_THEME', isTvFormalTheme ? 'formal' : 'moden');
+      applyTvThemeUI();
+      renderTvSlide();
+    }
+
+    function applyTvThemeUI() {
+      const btn = document.getElementById('themeToggleBtn');
+      const container = document.getElementById('slideCardContainer');
+      const header = document.getElementById('slideHeader');
+      const tableHeader = document.getElementById('slideTableHeader');
+      const title = document.getElementById('slideTitle');
+      const progressBg = document.getElementById('slideProgressBg');
+      const progressBar = document.getElementById('slideProgressBar');
+
+      if (!btn || !container) return;
+
+      if (isTvFormalTheme) {
+        btn.innerText = "🏛️ Mod Formal Korporat";
+        btn.className = "bg-blue-800 hover:bg-blue-700 text-white border border-blue-900 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow";
+        
+        container.className = "bg-white text-slate-900 rounded-2xl border border-slate-300 overflow-hidden shadow-2xl transition-colors duration-300";
+        header.className = "p-4 bg-slate-100 border-b border-slate-300 flex flex-wrap justify-between items-center gap-3";
+        tableHeader.className = "bg-blue-800 text-white text-xs uppercase tracking-wider font-bold shadow-sm";
+        title.className = "font-bold text-slate-900 text-lg uppercase tracking-wide";
+        if(progressBg) progressBg.className = "w-full bg-slate-200 h-1.5";
+        if(progressBar) progressBar.className = "bg-blue-800 h-1.5 w-0 transition-all duration-100 ease-linear";
+      } else {
+        btn.innerText = "🌙 Mod Moden (Gelap)";
+        btn.className = "bg-slate-700 hover:bg-slate-600 text-slate-200 border border-slate-600 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow";
+        
+        container.className = "bg-slate-800 text-slate-100 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl transition-colors duration-300";
+        header.className = "p-3.5 bg-slate-800/80 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2";
+        tableHeader.className = "bg-slate-900/80 text-slate-300 text-xs uppercase tracking-wider border-b border-slate-700 font-bold";
+        title.className = "font-bold text-slate-200 text-base";
+        if(progressBg) progressBg.className = "w-full bg-slate-900 h-1";
+        if(progressBar) progressBar.className = "bg-blue-500 h-1 w-0 transition-all duration-100 ease-linear";
       }
     }
 
@@ -682,14 +733,14 @@
       document.getElementById('statRate').textContent = `${rate}%`;
     }
 
-    // FUNGSI KHAS: SLIDE SHOW UNTUK TV (7 BARIS OPTIMISED)
+    // FUNGSI KHAS: SLIDE SHOW UNTUK TV (MOD FORMAL CORPORATE SERAGAM)
     function renderTvSlide() {
       const tbody = document.getElementById('tvSlideTableBody');
       const indicator = document.getElementById('slideIndicator');
       if(!tbody) return;
 
       if(reliefDatabase.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-slate-500">Tiada data untuk paparan slide. Buka Admin Panel untuk muat naik.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-slate-500 font-bold">Tiada data untuk paparan slide. Buka Admin Panel untuk muat naik.</td></tr>`;
         if(indicator) indicator.innerText = `Slaid 0 / 0`;
         return;
       }
@@ -709,19 +760,42 @@
         tbody.innerHTML = "";
         slideItems.forEach(item => {
           const tr = document.createElement('tr');
-          tr.className = item.status === "Confirmed" ? "hover:bg-slate-700/30 border-b border-slate-700/40" : "bg-amber-500/5 hover:bg-amber-500/10 border-b border-slate-700/40";
-          tr.innerHTML = `
-            <td class="py-3 px-6 font-bold text-blue-400">${item.waktu}</td>
-            <td class="py-3 px-6 text-slate-200 font-semibold">${item.guru_cuti} <span class="text-xs text-slate-400 block">(${item.alasan})</span></td>
-            <td class="py-3 px-6 font-bold text-white text-base">${item.kelas}</td>
-            <td class="py-3 px-6"><span class="px-2.5 py-1 bg-slate-700 text-slate-200 rounded-lg text-xs font-bold">${item.subjek}</span></td>
-            <td class="py-3 px-6 font-bold ${item.status === 'Confirmed' ? 'text-emerald-300' : 'text-amber-300'}">${item.guru_ganti}</td>
-            <td class="py-3 px-6 text-center">
-              ${item.status === 'Confirmed' 
-                ? `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">✓ Disahkan (${item.confirmed_time})</span>`
-                : `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">⏳ Belum Sah</span>`}
-            </td>
-          `;
+          
+          if (isTvFormalTheme) {
+            // Gaya Formal Korporat: Biru Waktu, Teks Kemas Seragam, Status Ringkas 1 Baris
+            tr.className = "bg-white hover:bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold";
+            
+            tr.innerHTML = `
+              <td class="py-3.5 px-6 font-bold text-blue-700 text-sm">${item.waktu}</td>
+              <td class="py-3.5 px-6 text-slate-800 font-semibold">${item.guru_cuti} <span class="text-xs text-slate-500 font-medium block">(${item.alasan})</span></td>
+              <td class="py-3.5 px-6 font-semibold text-slate-800">${item.kelas}</td>
+              <td class="py-3.5 px-6 text-center"><span class="px-2.5 py-1 bg-slate-100 text-slate-800 border border-slate-300 rounded text-xs font-bold shadow-sm">${item.subjek}</span></td>
+              <td class="py-3.5 px-6 font-semibold text-slate-800">${item.guru_ganti}</td>
+              <td class="py-3.5 px-6 text-center whitespace-nowrap">
+                ${item.status === 'Confirmed' 
+                  ? `<span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded text-xs font-bold shadow-sm">✓ Disahkan (${item.confirmed_time})</span>`
+                  : `<span class="inline-block px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded text-xs font-bold shadow-sm">⏳ Belum Sah</span>`}
+              </td>
+            `;
+          } else {
+            // Gaya Moden Dark Mode
+            tr.className = item.status === "Confirmed" 
+              ? "hover:bg-slate-700/30 border-b border-slate-700/40" 
+              : "bg-amber-500/5 hover:bg-amber-500/10 border-b border-slate-700/40";
+            
+            tr.innerHTML = `
+              <td class="py-3 px-6 font-bold text-blue-400">${item.waktu}</td>
+              <td class="py-3 px-6 text-slate-200 font-semibold">${item.guru_cuti} <span class="text-xs text-slate-400 block">(${item.alasan})</span></td>
+              <td class="py-3 px-6 font-bold text-white text-base">${item.kelas}</td>
+              <td class="py-3 px-6"><span class="px-2.5 py-1 bg-slate-700 text-slate-200 rounded-lg text-xs font-bold">${item.subjek}</span></td>
+              <td class="py-3 px-6 font-bold ${item.status === 'Confirmed' ? 'text-emerald-300' : 'text-amber-300'}">${item.guru_ganti}</td>
+              <td class="py-3 px-6 text-center">
+                ${item.status === 'Confirmed' 
+                  ? `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">✓ Disahkan (${item.confirmed_time})</span>`
+                  : `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">⏳ Belum Sah</span>`}
+              </td>
+            `;
+          }
           tbody.appendChild(tr);
         });
         tbody.classList.remove('opacity-0');
