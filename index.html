@@ -154,54 +154,62 @@
       </div>
     </section>
 
-   <!-- VIEW 1B: TV SLIDE SHOW (FORMAL KORPORAT KEMAS & SERAGAM) -->
-    <section id="viewTvSlide" class="hidden space-y-4">
-      <div id="slideCardContainer" class="bg-white text-slate-900 rounded-2xl border border-slate-300 overflow-hidden shadow-2xl transition-colors duration-300">
-        
-        <!-- HEADER SLIDE SHOW FORMAL -->
-        <div id="slideHeader" class="p-5 bg-slate-100 border-b border-slate-300 flex flex-wrap justify-between items-center gap-3">
-          <div class="flex items-center gap-4">
-            <span class="text-3xl">🏛️</span>
-            <div>
-              <h2 id="slideTitle" class="font-black text-slate-900 text-xl md:text-2xl uppercase tracking-wide">JADUAL PENGGANTIAN GURU (RELIEF)</h2>
-              <!-- DIBESARKAN SUPAYA JELAS KELIHATAN DARI JAUH DI DEWAN -->
-              <div id="tvSlideDate" class="inline-block bg-amber-400 text-slate-950 px-4 py-1.5 rounded-xl text-base md:text-lg font-black mt-1 shadow border border-amber-500 tracking-wider">
-                📅 TARIKH: -
-              </div>
-            </div>
-          </div>
-          
-          <div class="flex items-center gap-2 md:gap-3">
-            <!-- BUTANG SKRIN PENUH (KHAS UNTUK ANDROID TV / PC) -->
-            <button onclick="requestTvFullscreen()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow cursor-pointer">
-              🖥️ Skrin Penuh
-            </button>
 
-            <!-- BUTANG KELUAR / KEMBALI KE MENU UTAMA -->
-            <button onclick="switchTab('tv')" class="bg-rose-600 hover:bg-rose-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer">
-              ❌ Menu Utama
-            </button>
+<!-- VIEW 1B: TV SLIDE SHOW (FORMAL KORPORAT KEMAS & SERAGAM) -->
+<section id="viewTvSlide" class="hidden space-y-4">
+  <div id="slideCardContainer" class="bg-white text-slate-900 rounded-2xl border border-slate-300 overflow-hidden shadow-2xl transition-colors duration-300">
+    
+    <!-- HEADER SLIDE SHOW FORMAL (KEMASKINI: FLEX JUSTIFY-BETWEEN SEBARIS) -->
+    <div id="slideHeader" class="p-3.5 md:p-4 bg-slate-100 border-b border-slate-300 flex flex-wrap justify-between items-center gap-2 md:gap-3">
+      
+    <!-- BAHAGIAN KIRI: TAJUK & TARIKH -->
+<div class="flex items-center gap-3">
+  <span class="text-2xl md:text-3xl">🏛️</span>
+  <div>
+    <h2 id="slideTitle" class="font-black text-slate-900 text-lg md:text-xl uppercase tracking-wide leading-tight">JADUAL PENGGANTIAN GURU (RELIEF)</h2>
+    <!-- TULISAN TARIKH DIBESARKAN (text-sm md:text-base) DAN PADDING DILUASKAN (px-3.5 py-1.5) -->
+    <div id="tvSlideDate" class="inline-block bg-amber-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-sm md:text-base font-black mt-1 shadow border border-amber-500 tracking-wider">
+      📅 TARIKH: -
+    </div>
+  </div>
+</div>
+      
+     <!-- BAHAGIAN KANAN: BAR BUTANG KAWALAN (SEBARIS SEPERTI MOD MODEN) -->
+<div class="flex flex-wrap items-center gap-1.5 md:gap-2">
+  <!-- BUTANG TETAPAN TV (BOLEH SET BARIS, MASA SLAID & KELAJUAN TEKS) -->
+  <button onclick="openTvSettingsModal()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer whitespace-nowrap">
+    ⚙️ <span>Tetapan TV</span>
+  </button>
 
-            <!-- SUIS TEMA (MODEN / FORMAL) -->
-            <button onclick="toggleTvTheme()" id="themeToggleBtn" class="bg-blue-800 text-white hover:bg-blue-700 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow cursor-pointer">
-              🏛️ Mod Formal
-            </button>
+        <!-- BUTANG SKRIN PENUH -->
+        <button onclick="requestTvFullscreen()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer whitespace-nowrap">
+          🖥️ Skrin Penuh
+        </button>
 
-            <span id="slideIndicator" class="bg-slate-200 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold">
-              Slaid 1 / 1
-            </span>
-            <div class="flex gap-1">
-              <button onclick="prevSlide()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">◀</button>
-              <button onclick="nextSlide()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">▶</button>
-            </div>
-          </div>
+        <!-- BUTANG KELUAR / KEMBALI KE MENU UTAMA -->
+        <button onclick="switchTab('tv')" class="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer whitespace-nowrap">
+          ❌ Menu Utama
+        </button>
+
+        <!-- SUIS TEMA (MODEN / FORMAL) -->
+        <button onclick="toggleTvTheme()" id="themeToggleBtn" class="bg-blue-800 text-white hover:bg-blue-700 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer whitespace-nowrap">
+          🏛️ Mod Formal Korporat
+        </button>
+
+        <span id="slideIndicator" class="bg-slate-200 text-slate-800 border border-slate-300 px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap">
+          Slaid 1 / 1
+        </span>
+        <div class="flex gap-1">
+          <button onclick="prevSlide()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 px-2.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">◀</button>
+          <button onclick="nextSlide()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 px-2.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">▶</button>
         </div>
+      </div>
+    </div>
 
-        <!-- PROGRESS BAR ANIMASI SLIDE -->
-        <div class="w-full bg-slate-200 h-1.5" id="slideProgressBg">
-          <div id="slideProgressBar" class="bg-blue-800 h-1.5 w-0 transition-all duration-100 ease-linear"></div>
-        </div>
-
+    <!-- PROGRESS BAR ANIMASI SLIDE -->
+    <div class="w-full bg-slate-200 h-1.5" id="slideProgressBg">
+      <div id="slideProgressBar" class="bg-blue-800 h-1.5 w-0 transition-all duration-100 ease-linear"></div>
+    </div>
        
 <!-- MARQUEE GURU TIDAK HADIR -->
         <div class="bg-red-50 border-b border-red-200 py-2.5 px-4 flex items-center gap-3 overflow-hidden" id="marqueeContainer">
@@ -334,6 +342,59 @@
 
   </main>
 
+<!-- MODAL TETAPAN PAPARAN TV -->
+<div id="tvSettingsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl p-6 text-white space-y-5 animate-in fade-in zoom-in duration-200">
+    
+    <!-- TAJUK MODAL -->
+    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+      <h3 class="font-black text-lg text-amber-400 flex items-center gap-2">
+        ⚙️ Tetapan Paparan TV Ini
+      </h3>
+      <button onclick="closeTvSettingsModal()" class="text-slate-400 hover:text-white text-xl font-bold p-1 cursor-pointer">✕</button>
+    </div>
+
+    <!-- BORANG TETAPAN -->
+    <div class="space-y-4">
+      
+      <!-- 1. BARIS PER SLAID -->
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-300">1. Jumlah Baris Per Slaid:</label>
+        <input type="number" id="settingTvRows" min="3" max="15" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
+      </div>
+
+      <!-- 2. MASA PERTUKARAN SLAID (SAAT) -->
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-300">2. Masa Tukar Slaid (Saat):</label>
+        <input type="number" id="settingSlideDuration" min="3" max="120" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
+      </div>
+
+      <!-- 3. KELAJUAN TEKS BERJALAN (MARQUEE) -->
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-300">3. Kelajuan Teks Guru Tidak Hadir:</label>
+        <select id="settingMarqueeSpeed" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
+          <option value="2">Sangat Perlahan (Kelajuan: 2)</option>
+          <option value="4">Perlahan / Standard (Kelajuan: 4)</option>
+          <option value="6">Sederhana (Kelajuan: 6)</option>
+          <option value="8">Laju (Kelajuan: 8)</option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- BUTANG AKSI -->
+    <div class="flex gap-2 pt-2">
+      <button onclick="closeTvSettingsModal()" class="w-1/2 bg-slate-800 hover:bg-slate-700 py-2.5 rounded-xl text-xs font-bold text-slate-300 transition cursor-pointer">
+        Batal
+      </button>
+      <button onclick="saveTvSettings()" class="w-1/2 bg-amber-500 hover:bg-amber-400 py-2.5 rounded-xl text-xs font-bold text-slate-950 transition cursor-pointer shadow">
+        💾 Simpan Tetapan
+      </button>
+    </div>
+
+  </div>
+</div>
+
 <!-- TEMPLATE 1: HIDDEN UNTUK JANA PDF PRINTABLE SLIP INDIVIDU -->
   <div id="pdfTemplate" class="hidden bg-white text-slate-900 p-8 font-sans max-w-2xl mx-auto">
     <div class="text-center border-b-2 border-slate-800 pb-4 mb-4">
@@ -410,16 +471,83 @@
     let currentSchool = localStorage.getItem('ERELIEF_SCHOOL_NAME') || 'SK FELDA SG KEMAHAL';
     let realtimeChannel = null;
 
-    // VARIABLE UNTUK SLIDE SHOW & TEMA
+ // VARIABLE UNTUK SLIDE SHOW & TEMA
     let currentSlideIndex = 0;
-    const ROWS_PER_SLIDE = 7;
     let slideTimer = null;
     let progressTimer = null;
-    const SLIDE_DURATION_MS = 20000; // 20 saat
     let isTvFormalTheme = localStorage.getItem('ERELIEF_TV_THEME') !== 'moden';
 
-      document.addEventListener('DOMContentLoaded', async () => {
-      await updateSchoolDisplay(); // <--- GANTIKAN KEPADA THIS
+    // ==========================================
+    // TETAPAN KHAS PERANTI TV (LOCALSTORAGE)
+    // ==========================================
+    let ROWS_PER_SLIDE = parseInt(localStorage.getItem('ERELIEF_TV_ROWS')) || 7;
+    let SLIDE_DURATION_MS = (parseInt(localStorage.getItem('ERELIEF_TV_DURATION')) || 20) * 1000; // Dalam milisaat
+    let MARQUEE_SPEED = parseInt(localStorage.getItem('ERELIEF_TV_MARQUEE_SPEED')) || 4;
+
+    // FUNGSI BUKA MODAL TETAPAN
+    function openTvSettingsModal() {
+      const modal = document.getElementById('tvSettingsModal');
+      if (!modal) return;
+
+      // Masukkan nilai semasa ke dalam input modal
+      document.getElementById('settingTvRows').value = ROWS_PER_SLIDE;
+      document.getElementById('settingSlideDuration').value = SLIDE_DURATION_MS / 1000;
+      document.getElementById('settingMarqueeSpeed').value = MARQUEE_SPEED;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    // FUNGSI TUTUP MODAL
+    function closeTvSettingsModal() {
+      const modal = document.getElementById('tvSettingsModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    // FUNGSI SIMPAN TETAPAN BARU
+    function saveTvSettings() {
+      const rowsVal = parseInt(document.getElementById('settingTvRows').value);
+      const durationVal = parseInt(document.getElementById('settingSlideDuration').value);
+      const marqueeVal = parseInt(document.getElementById('settingMarqueeSpeed').value);
+
+      if (isNaN(rowsVal) || rowsVal < 1 || isNaN(durationVal) || durationVal < 3) {
+        alert("Sila masukkan nilai nombor yang sah!");
+        return;
+      }
+
+      // 1. Simpan ke LocalStorage peranti ini
+      ROWS_PER_SLIDE = rowsVal;
+      SLIDE_DURATION_MS = durationVal * 1000;
+      MARQUEE_SPEED = marqueeVal;
+
+      localStorage.setItem('ERELIEF_TV_ROWS', ROWS_PER_SLIDE);
+      localStorage.setItem('ERELIEF_TV_DURATION', durationVal);
+      localStorage.setItem('ERELIEF_TV_MARQUEE_SPEED', MARQUEE_SPEED);
+
+      // 2. Kemaskini kelajuan Marquee serta-merta
+      const marqueeEl = document.getElementById('marqueeAbsentText');
+      if (marqueeEl) {
+        marqueeEl.setAttribute('scrollamount', MARQUEE_SPEED);
+      }
+
+      // 3. Reset Slaid & Restart Pemasa Slide Show
+      currentSlideIndex = 0;
+      if (typeof renderTvSlide === 'function') {
+        renderTvSlide();
+      }
+      if (typeof startSlideTimer === 'function') {
+        startSlideTimer(); // Restart pemasa ikut masa baharu
+      }
+
+      closeTvSettingsModal();
+      alert(`✅ Tetapan TV Berjaya Disimpan!\n- Baris: ${ROWS_PER_SLIDE}\n- Masa Slaid: ${durationVal} Saat\n- Kelajuan Marquee: ${MARQUEE_SPEED}`);
+    }
+
+     document.addEventListener('DOMContentLoaded', async () => {
+      await updateSchoolDisplay();
       await fetchCloudData();
       listenToRealtime();
       applyTvThemeUI();
@@ -459,14 +587,14 @@
       if (aEl) aEl.innerText = `Tarikh: ${activeTarikhHeader}`;
     }
 
-  // FUNGSI PROSES SENARAI MARQUEE GURU TIDAK HADIR
+ // FUNGSI PROSES SENARAI MARQUEE GURU TIDAK HADIR
     function updateMarqueeAbsentList() {
       const marqueeEl = document.getElementById('marqueeAbsentText');
       if (!marqueeEl) return;
 
       if (reliefDatabase.length === 0) {
         marqueeEl.innerText = "Tiada rekod guru tidak hadir hari ini.";
-        marqueeEl.setAttribute('scrollamount', '4');
+        marqueeEl.setAttribute('scrollamount', MARQUEE_SPEED);
         return;
       }
 
@@ -482,18 +610,13 @@
 
       if (absentTeachers.length === 0) {
         marqueeEl.innerText = "Tiada rekod guru tidak hadir hari ini.";
-        marqueeEl.setAttribute('scrollamount', '4');
+        marqueeEl.setAttribute('scrollamount', MARQUEE_SPEED);
       } else {
         let formattedList = absentTeachers.map(teacher => `${teacher} (${absentMap[teacher]})`).join('   ---   ');
         marqueeEl.innerText = `⚠️ ${formattedList} ⚠️`;
 
-        // Laraskan kelajuan pergerakan marquee (scrollamount)
-        // Nilai 3/4 bermaksud pergerakan perlahan & senang dibaca di TV
-        if (absentTeachers.length > 3) {
-          marqueeEl.setAttribute('scrollamount', '3');
-        } else {
-          marqueeEl.setAttribute('scrollamount', '4');
-        }
+        // Gunakan kelajuan marquee daripada tetapan khas TV ini
+        marqueeEl.setAttribute('scrollamount', MARQUEE_SPEED);
       }
     }
 
@@ -594,7 +717,7 @@
       renderTvSlide();
     }
 
-    function applyTvThemeUI() {
+  function applyTvThemeUI() {
       const btn = document.getElementById('themeToggleBtn');
       const container = document.getElementById('slideCardContainer');
       const header = document.getElementById('slideHeader');
@@ -608,26 +731,29 @@
 
       if (isTvFormalTheme) {
         btn.innerText = "🏛️ Mod Formal Korporat";
-        btn.className = "bg-blue-800 hover:bg-blue-700 text-white border border-blue-900 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow";
+        btn.className = "bg-blue-800 hover:bg-blue-700 text-white border border-blue-900 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow whitespace-nowrap";
         
         container.className = "bg-white text-slate-900 rounded-2xl border border-slate-300 overflow-hidden shadow-2xl transition-colors duration-300";
-        header.className = "p-5 bg-slate-100 border-b border-slate-300 flex flex-wrap justify-between items-center gap-3";
+        // Header dipadatkan padding (p-3) & gap mengecil (gap-2) supaya muat sebaris
+        header.className = "p-3 md:p-4 bg-slate-100 border-b border-slate-300 flex flex-wrap justify-between items-center gap-2";
         tableHeader.className = "bg-blue-800 text-white text-xs md:text-sm uppercase tracking-wider font-bold shadow-sm";
-        title.className = "font-black text-slate-900 text-xl md:text-2xl uppercase tracking-wide";
+        title.className = "font-black text-slate-900 text-lg md:text-xl uppercase tracking-wide";
+        
         if(progressBg) progressBg.className = "w-full bg-slate-200 h-1.5";
         if(progressBar) progressBar.className = "bg-blue-800 h-1.5 w-0 transition-all duration-100 ease-linear";
-        if(marqueeContainer) marqueeContainer.className = "bg-red-50 border-b border-red-200 py-2.5 px-4 flex items-center gap-3 overflow-hidden";
+        if(marqueeContainer) marqueeContainer.className = "bg-red-50 border-b border-red-200 py-2 px-4 flex items-center gap-3 overflow-hidden";
       } else {
         btn.innerText = "🌙 Mod Moden (Gelap)";
-        btn.className = "bg-slate-700 hover:bg-slate-600 text-slate-200 border border-slate-600 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow";
+        btn.className = "bg-slate-700 hover:bg-slate-600 text-slate-200 border border-slate-600 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow whitespace-nowrap";
         
         container.className = "bg-slate-800 text-slate-100 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl transition-colors duration-300";
-        header.className = "p-4 bg-slate-800/80 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2";
+        header.className = "p-3 md:p-4 bg-slate-800/80 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2";
         tableHeader.className = "bg-slate-900/80 text-slate-300 text-xs md:text-sm uppercase tracking-wider border-b border-slate-700 font-bold";
         title.className = "font-bold text-slate-200 text-lg md:text-xl";
+        
         if(progressBg) progressBg.className = "w-full bg-slate-900 h-1";
         if(progressBar) progressBar.className = "bg-blue-500 h-1 w-0 transition-all duration-100 ease-linear";
-        if(marqueeContainer) marqueeContainer.className = "bg-red-950/40 border-b border-red-900/50 py-2.5 px-4 flex items-center gap-3 overflow-hidden";
+        if(marqueeContainer) marqueeContainer.className = "bg-red-950/40 border-b border-red-900/50 py-2 px-4 flex items-center gap-3 overflow-hidden";
       }
     }
 
