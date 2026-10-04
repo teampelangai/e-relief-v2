@@ -1199,7 +1199,7 @@
       });
     }
 
-// FUNGSI 2: JANA MASTER RELIEF PDF (BEKERJA SEMPURNA DI PC & PHONE VIA GITHUB PAGES)
+// FUNGSI 2: JANA MASTER RELIEF PDF (TANGKAP KESELURUHAN TINGGI CANVAS TANPA TERPOTONG DATA)
     function generateMasterPDF() {
       if (!reliefDatabase || reliefDatabase.length === 0) {
         alert("Tiada data jadual relief untuk dijana!");
@@ -1262,33 +1262,38 @@
       const element = document.getElementById('masterPdfTemplate');
       if (!element) return;
 
-      // BUAT KONTENA PENYESUAIAN DESKTOP SEMENTARA UNTUK MENGELAKKAN TERPOTONG DI PHONE
+      // KONTENA DESKTOP SEMENTARA
       const wrapper = document.createElement('div');
-      wrapper.style.position = 'fixed';
+      wrapper.style.position = 'absolute';
       wrapper.style.top = '-9999px';
       wrapper.style.left = '-9999px';
-      wrapper.style.width = '794px'; // Lebar tepat A4 Desktop
-      wrapper.style.overflow = 'hidden';
+      wrapper.style.width = '794px'; 
       document.body.appendChild(wrapper);
 
-      // Pindahkan elemen templat ke dalam kontena penyesuaian
       element.classList.remove('hidden');
       wrapper.appendChild(element);
+
+      // KIRA TINGGI SEBENAR SELURUH DOKUMEN SUPAYA PHONE TAK TERPOTONG BAWAH
+      const fullHeight = element.scrollHeight;
 
       const filename = `Master_Substitution_${activeTarikhHeader.replace(/\s+/g, '_')}.pdf`;
 
       const opt = {
-        margin:        [8, 6, 8, 6],
+        margin:        8,
         filename:      filename,
         image:         { type: 'jpeg', quality: 0.98 },
-        html2canvas:   { scale: 2, useCORS: true, width: 794 },
+        html2canvas:   { 
+          scale: 2, 
+          useCORS: true, 
+          width: 794,
+          height: fullHeight, // PAKSA CANVAS AMBIL KESELURUHAN TINGGI ELEMEN
+          windowHeight: fullHeight
+        },
         jsPDF:         { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak:     { mode: ['css', 'legacy'] }
       };
 
-      // PROSES JANA MUAT TURUN STANDARD
       html2pdf().set(opt).from(element).save().then(() => {
-        // Kembalikan elemen ke tempat asal selepas selesai
         element.classList.add('hidden');
         document.body.appendChild(element);
         document.body.removeChild(wrapper);
