@@ -1199,7 +1199,7 @@
       });
     }
 
-// FUNGSI 2: JANA MASTER RELIEF PDF (STABIL DI PC & MOBILE GITHUB PAGES)
+// FUNGSI 2: JANA MASTER RELIEF PDF (BEKERJA SEMPURNA DI PC & PHONE VIA GITHUB PAGES)
     function generateMasterPDF() {
       if (!reliefDatabase || reliefDatabase.length === 0) {
         alert("Tiada data jadual relief untuk dijana!");
@@ -1238,7 +1238,7 @@
           let waktuClean = item.waktu ? item.waktu.replace(/Waktu\s*/i, '') : '';
           const isLastRowOfGroup = index === items.length - 1;
 
-          // Garisan pembagi bawah kumpulan guru
+          // Garisan pembagi bawah kumpulan guru (Format ASC Original)
           const rowBorderStyle = isLastRowOfGroup 
             ? 'border-bottom: 2.5px solid #000000;' 
             : 'border-bottom: 1px solid #e2e8f0;';
@@ -1262,13 +1262,18 @@
       const element = document.getElementById('masterPdfTemplate');
       if (!element) return;
 
-      // KUNCI LEBAR DENGAN AMAN
-      const originalStyle = element.getAttribute('style') || '';
-      element.style.width = '794px';
-      element.style.minWidth = '794px';
-      element.style.position = 'absolute';
-      element.style.left = '-9999px';
+      // BUAT KONTENA PENYESUAIAN DESKTOP SEMENTARA UNTUK MENGELAKKAN TERPOTONG DI PHONE
+      const wrapper = document.createElement('div');
+      wrapper.style.position = 'fixed';
+      wrapper.style.top = '-9999px';
+      wrapper.style.left = '-9999px';
+      wrapper.style.width = '794px'; // Lebar tepat A4 Desktop
+      wrapper.style.overflow = 'hidden';
+      document.body.appendChild(wrapper);
+
+      // Pindahkan elemen templat ke dalam kontena penyesuaian
       element.classList.remove('hidden');
+      wrapper.appendChild(element);
 
       const filename = `Master_Substitution_${activeTarikhHeader.replace(/\s+/g, '_')}.pdf`;
 
@@ -1281,26 +1286,19 @@
         pagebreak:     { mode: ['css', 'legacy'] }
       };
 
-      // JANA DAN SIMPAN TRUS KEPADA POPUP DOWNLOAD NATIVE
-      html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-        // Buat Muat Turun Secara Direct Pautan Anchor (Menembus Popup Blocker Mobile)
-        const blob = pdf.output('blob');
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }).then(() => {
-        element.setAttribute('style', originalStyle);
+      // PROSES JANA MUAT TURUN STANDARD
+      html2pdf().set(opt).from(element).save().then(() => {
+        // Kembalikan elemen ke tempat asal selepas selesai
         element.classList.add('hidden');
+        document.body.appendChild(element);
+        document.body.removeChild(wrapper);
       }).catch((err) => {
         console.error("Ralat PDF:", err);
-        element.setAttribute('style', originalStyle);
         element.classList.add('hidden');
+        document.body.appendChild(element);
+        if (wrapper.parentNode) document.body.removeChild(wrapper);
       });
     }
-
 
 // ==========================================
     // TETAPAN NAMA SEKOLAH DINAMIK (SUPABASE)
