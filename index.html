@@ -1243,7 +1243,7 @@
       });
     }
 
-// FUNGSI 2: JANA MASTER RELIEF PDF (BEBAS TERPOTONG 100% - NATIVE PRINT)
+// FUNGSI 2: JANA MASTER RELIEF PDF (TAB BAHARU DENGAN BUTANG PRINT & WHATSAPP)
     function generateMasterPDF() {
       if (!reliefDatabase || reliefDatabase.length === 0) {
         alert("Tiada data jadual relief untuk dijana!");
@@ -1306,16 +1306,100 @@
       const element = document.getElementById('masterPdfTemplate');
       if (!element) return;
 
-      // Paparkan sementara untuk dialog cetakan sistem
+      // Paparkan sementara kandungan template
       element.classList.remove('hidden');
 
-      // Panggil prapaparan cetak native peranti/browser
-      setTimeout(() => {
-        window.print();
-        element.classList.add('hidden');
-      }, 300);
-    }
+      // Ambil seluruh HTML template dan CSS daripada dokumen
+      const printContent = element.outerHTML;
+      const allStyles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+        .map(style => style.outerHTML)
+        .join('');
 
+      element.classList.add('hidden');
+
+      // Buka Tab Baharu
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        alert("Sila benarkan 'Pop-up' pada pelayar anda untuk membuka paparan dokumen.");
+        return;
+      }
+
+      // Tulis struktur HTML lengkap dalam Tab Baharu bersama Butang Kawalan Mesra Guru
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Master Substitution - ${activeTarikhHeader}</title>
+          ${allStyles}
+          <style>
+            body { 
+              background-color: #f3f4f6; 
+              margin: 0; 
+              padding: 0; 
+              font-family: sans-serif; 
+            }
+            .no-print-bar {
+              position: sticky;
+              top: 0;
+              z-index: 9999;
+              background-color: #1e293b;
+              color: white;
+              padding: 12px 20px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+            .btn-action {
+              padding: 8px 16px;
+              border-radius: 6px;
+              font-weight: bold;
+              cursor: pointer;
+              border: none;
+              font-size: 14px;
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              text-decoration: none;
+            }
+            .btn-print { background-color: #2563eb; color: white; }
+            .btn-print:hover { background-color: #1d4ed8; }
+            .print-container {
+              max-width: 800px;
+              margin: 20px auto;
+              background: white;
+              padding: 20px;
+              box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+              border-radius: 8px;
+            }
+            @media print {
+              .no-print-bar { display: none !important; }
+              .print-container { 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                box-shadow: none !important; 
+                max-width: 100% !important; 
+              }
+              body { background: white !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="no-print-bar">
+            <span style="font-size: 15px; font-weight: 600;">📄 Prapaparan Master Relief</span>
+            <div style="display: flex; gap: 10px;">
+              <button onclick="window.print()" class="btn-action btn-print">🖨️ CETAK / SIMPAN PDF</button>
+            </div>
+          </div>
+          <div class="print-container">
+            ${printContent}
+          </div>
+        </body>
+        </html>
+      `);
+
+      printWindow.document.close();
+    }
 // ==========================================
     // TETAPAN NAMA SEKOLAH DINAMIK (SUPABASE)
     // ==========================================
