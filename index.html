@@ -1199,7 +1199,7 @@
       });
     }
 
-// FUNGSI 2: JANA MASTER RELIEF PDF (STABIL & DIBENTUK SEMULA DENGAN KEMAS)
+// FUNGSI 2: JANA MASTER RELIEF PDF (STABIL DI PC & MOBILE GITHUB PAGES)
     function generateMasterPDF() {
       if (!reliefDatabase || reliefDatabase.length === 0) {
         alert("Tiada data jadual relief untuk dijana!");
@@ -1261,21 +1261,42 @@
 
       const element = document.getElementById('masterPdfTemplate');
       if (!element) return;
+
+      // KUNCI LEBAR DENGAN AMAN
+      const originalStyle = element.getAttribute('style') || '';
+      element.style.width = '794px';
+      element.style.minWidth = '794px';
+      element.style.position = 'absolute';
+      element.style.left = '-9999px';
       element.classList.remove('hidden');
 
+      const filename = `Master_Substitution_${activeTarikhHeader.replace(/\s+/g, '_')}.pdf`;
+
       const opt = {
-        margin:        [10, 8, 12, 8],
-        filename:      `Master_Substitution_${activeTarikhHeader.replace(/\s+/g, '_')}.pdf`,
+        margin:        [8, 6, 8, 6],
+        filename:      filename,
         image:         { type: 'jpeg', quality: 0.98 },
-        html2canvas:   { scale: 2, useCORS: true },
+        html2canvas:   { scale: 2, useCORS: true, width: 794 },
         jsPDF:         { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak:     { mode: ['css', 'legacy'] }
       };
 
-      html2pdf().set(opt).from(element).save().then(() => {
+      // JANA DAN SIMPAN TRUS KEPADA POPUP DOWNLOAD NATIVE
+      html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+        // Buat Muat Turun Secara Direct Pautan Anchor (Menembus Popup Blocker Mobile)
+        const blob = pdf.output('blob');
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }).then(() => {
+        element.setAttribute('style', originalStyle);
         element.classList.add('hidden');
       }).catch((err) => {
         console.error("Ralat PDF:", err);
+        element.setAttribute('style', originalStyle);
         element.classList.add('hidden');
       });
     }
