@@ -50,34 +50,78 @@
       });
     }
   </script>
-
 <!-- CSS ANIMASI BERGERAK (MARQUEE) & TETAPAN CETAKAN PDF -->
-  <style>
-    @keyframes marqueeAnim {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
+<style>
+  @keyframes marqueeAnim {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+  .animate-marquee {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    animation-name: marqueeAnim;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-duration: 30s; /* Kelajuan lalai */
+  }
+
+  /* ==================================================== */
+  /* ATURAN ELAK TR & BARIS JADUAL TERPOTONG DI MUKA SURAT PDF */
+  /* ==================================================== */
+  #masterPdfTemplate tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #masterPdfTemplate table {
+    page-break-inside: auto;
+  }
+
+  /* ==================================================== */
+  /* TETAPAN CETAKAN NATIVE (MEDIA PRINT) - UNTUK MULTI-PAGE */
+  /* ==================================================== */
+  @media print {
+    /* Sembunyikan semua elemen aplikasi/web biasa semasa dialog cetak */
+    body * {
+      visibility: hidden !important;
     }
-    .animate-marquee {
-      display: inline-block !important;
-      white-space: nowrap !important;
-      animation-name: marqueeAnim;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-      animation-duration: 30s; /* Kelajuan lalai */
+    
+    /* Hanya paparkan kawasan template cetakan master sahaja */
+    #masterPdfTemplate, #masterPdfTemplate * {
+      visibility: visible !important;
+    }
+    
+    /* Posisikan template di paling atas untuk cetakan A4 */
+    #masterPdfTemplate {
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: block !important;
     }
 
-    /* ==================================================== */
-    /* ATURAN ELAK TR & BARIS JADUAL TERPOTONG DI MUKA SURAT PDF */
-    /* ==================================================== */
-    #masterPdfTemplate tr {
+    /* Kunci pembahagian baris jadual supaya tidak terputus dua di tengah muka surat */
+    tr {
       page-break-inside: avoid !important;
       break-inside: avoid !important;
     }
 
-    #masterPdfTemplate table {
-      page-break-inside: auto;
+    /* Ulang tajuk jadual (header) secara automatik di atas Muka Surat 2, 3, 4 dll */
+    thead {
+      display: table-header-group !important;
     }
-  </style>
+
+    /* Tetapan saiz kertas A4 & margin cetakan sistem */
+    @page {
+      size: A4 portrait;
+      margin: 12mm 10mm 12mm 10mm;
+    }
+  }
+</style>
+
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased transition-colors duration-300" id="mainBody">
 
@@ -1199,7 +1243,7 @@
       });
     }
 
-// FUNGSI 2: JANA MASTER RELIEF PDF (TANGKAP KESELURUHAN TINGGI CANVAS TANPA TERPOTONG DATA)
+// FUNGSI 2: JANA MASTER RELIEF PDF (BEBAS TERPOTONG 100% - NATIVE PRINT)
     function generateMasterPDF() {
       if (!reliefDatabase || reliefDatabase.length === 0) {
         alert("Tiada data jadual relief untuk dijana!");
@@ -1262,47 +1306,14 @@
       const element = document.getElementById('masterPdfTemplate');
       if (!element) return;
 
-      // KONTENA DESKTOP SEMENTARA
-      const wrapper = document.createElement('div');
-      wrapper.style.position = 'absolute';
-      wrapper.style.top = '-9999px';
-      wrapper.style.left = '-9999px';
-      wrapper.style.width = '794px'; 
-      document.body.appendChild(wrapper);
-
+      // Paparkan sementara untuk dialog cetakan sistem
       element.classList.remove('hidden');
-      wrapper.appendChild(element);
 
-      // KIRA TINGGI SEBENAR SELURUH DOKUMEN SUPAYA PHONE TAK TERPOTONG BAWAH
-      const fullHeight = element.scrollHeight;
-
-      const filename = `Master_Substitution_${activeTarikhHeader.replace(/\s+/g, '_')}.pdf`;
-
-      const opt = {
-        margin:        8,
-        filename:      filename,
-        image:         { type: 'jpeg', quality: 0.98 },
-        html2canvas:   { 
-          scale: 2, 
-          useCORS: true, 
-          width: 794,
-          height: fullHeight, // PAKSA CANVAS AMBIL KESELURUHAN TINGGI ELEMEN
-          windowHeight: fullHeight
-        },
-        jsPDF:         { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak:     { mode: ['css', 'legacy'] }
-      };
-
-      html2pdf().set(opt).from(element).save().then(() => {
+      // Panggil prapaparan cetak native peranti/browser
+      setTimeout(() => {
+        window.print();
         element.classList.add('hidden');
-        document.body.appendChild(element);
-        document.body.removeChild(wrapper);
-      }).catch((err) => {
-        console.error("Ralat PDF:", err);
-        element.classList.add('hidden');
-        document.body.appendChild(element);
-        if (wrapper.parentNode) document.body.removeChild(wrapper);
-      });
+      }, 300);
     }
 
 // ==========================================
