@@ -146,69 +146,91 @@
 
   <main class="max-w-7xl mx-auto p-4 space-y-6">
 
-    <!-- VIEW 1: DASHBOARD TV (STATIK) -->
-    <section id="viewTv" class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center">
-          <div>
-            <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Jumlah Waktu Ganti</p>
-            <p class="text-3xl font-black text-blue-400 mt-1" id="statTotal">0</p>
-          </div>
-          <span class="text-3xl">📋</span>
-        </div>
-        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center">
-          <div>
-            <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Telah Disahkan</p>
-            <p class="text-3xl font-black text-emerald-400 mt-1" id="statConfirmed">0</p>
-          </div>
-          <span class="text-3xl">✅</span>
-        </div>
-        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center">
-          <div>
-            <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Kadar Pengesahan</p>
-            <p class="text-3xl font-black text-indigo-400 mt-1" id="statRate">0%</p>
-          </div>
-          <span class="text-3xl">📊</span>
-        </div>
+  <!-- VIEW 1: DASHBOARD TV (STATIK) -->
+<section id="viewTv" class="space-y-6">
+
+  <!-- STATISTIK KAD ATAS -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="dbStatContainer">
+    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center transition-colors duration-300" id="statCard1">
+      <div>
+        <p class="text-xs text-slate-400 uppercase font-bold tracking-wider" id="statCardLabel1">Jumlah Waktu Ganti</p>
+        <p class="text-3xl font-black text-blue-400 mt-1" id="statTotal">0</p>
+      </div>
+      <span class="text-3xl">📋</span>
+    </div>
+    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center transition-colors duration-300" id="statCard2">
+      <div>
+        <p class="text-xs text-slate-400 uppercase font-bold tracking-wider" id="statCardLabel2">Telah Disahkan</p>
+        <p class="text-3xl font-black text-emerald-400 mt-1" id="statConfirmed">0</p>
+      </div>
+      <span class="text-3xl">✅</span>
+    </div>
+    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center transition-colors duration-300" id="statCard3">
+      <div>
+        <p class="text-xs text-slate-400 uppercase font-bold tracking-wider" id="statCardLabel3">Kadar Pengesahan</p>
+        <p class="text-3xl font-black text-indigo-400 mt-1" id="statRate">0%</p>
+      </div>
+      <span class="text-3xl">📊</span>
+    </div>
+  </div>
+
+  <!-- BEKAS JADUAL DASHBOARD TV -->
+  <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl transition-colors duration-300" id="dbTableContainer">
+    
+    <!-- HEADER BAR KAWALAN -->
+    <div class="p-4 bg-slate-800/50 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2" id="tvDashboardHeader">
+      <div class="flex items-center gap-3">
+        <h2 class="font-bold text-slate-200" id="tvDashboardTitle">Paparan Jadual Relief Harian</h2>
+        <!-- LENCANA TARIKH YANG DIBERSIHKAN (JELAS & MENONJOL) -->
+<span id="tvScheduleDate" class="bg-amber-400 text-slate-950 border border-amber-500 px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-black flex items-center gap-1 shadow tracking-wide">
+  📅 Tarikh: -
+</span>
       </div>
 
-      <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
-        <div class="p-4 bg-slate-800/50 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
-          <div class="flex items-center gap-3">
-            <h2 class="font-bold text-slate-200">Paparan Jadual Relief Harian</h2>
-            <span id="tvScheduleDate" class="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-              📅 Tarikh: -
-            </span>
-          </div>
-          <div class="flex items-center gap-3">
-            <button onclick="generateMasterPDF()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow">
-              📄 Cetak Master PDF
-            </button>
-            <span class="animate-pulse flex h-3 w-3 relative">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-            </span>
-          </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- TOGGLE MOD A / MOD B -->
+        <div class="flex bg-slate-900 border border-slate-700 rounded-xl p-0.5 text-xs font-bold" id="dbSortBg">
+          <button onclick="toggleDashboardSort('A')" id="btnDbSortA" class="px-2.5 py-1 rounded-lg bg-blue-600 text-white transition cursor-pointer">
+            Waktu (Mod A)
+          </button>
+          <button onclick="toggleDashboardSort('B')" id="btnDbSortB" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition cursor-pointer">
+            Guru ASC (Mod B)
+          </button>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-900/60 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-700">
-                <th class="py-3 px-6">Waktu</th>
-                <th class="py-3 px-6">Guru Cuti (Alasan)</th>
-                <th class="py-3 px-6">Kelas</th>
-                <th class="py-3 px-6">Subjek</th>
-                <th class="py-3 px-6">Guru Ganti</th>
-                <th class="py-3 px-6 text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody id="tvTableBody" class="divide-y divide-slate-700/50 text-sm">
-              <tr><td colspan="6" class="py-8 text-center text-slate-500">Tiada data. Buka Admin Panel untuk muat naik.</td></tr>
-            </tbody>
-          </table>
-        </div>
+
+        <!-- TOGGLE TEMA MODEN / FORMAL KORPORAT -->
+        <button onclick="toggleDashboardTheme()" id="btnDbTheme" class="bg-blue-800 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer">
+          🏛️ Mod Formal Korporat
+        </button>
+
+        <!-- BUTANG CETAK MASTER PDF -->
+        <button onclick="generateMasterPDF()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer">
+          📄 Cetak Master PDF
+        </button>
       </div>
-    </section>
+    </div>
+
+    <!-- JADUAL RELIEF -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead id="tvTableHead">
+          <tr class="bg-slate-900/60 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-700">
+            <th class="py-3 px-6">Waktu</th>
+            <th class="py-3 px-6">Guru Cuti (Alasan)</th>
+            <th class="py-3 px-6">Kelas</th>
+            <th class="py-3 px-6">Subjek</th>
+            <th class="py-3 px-6">Guru Ganti</th>
+            <th class="py-3 px-6 text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody id="tvTableBody" class="divide-y divide-slate-700/50 text-sm">
+          <tr><td colspan="6" class="py-8 text-center text-slate-500">Tiada data. Buka Admin Panel untuk muat naik.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
 
 
 <!-- VIEW 1B: TV SLIDE SHOW (FORMAL KORPORAT KEMAS & SERAGAM) -->
@@ -398,7 +420,7 @@
 
   </main>
 
-<!-- MODAL TETAPAN PAPARAN TV -->
+<!-- MODAL TETAPAN PAPARAN TV (DIKEMASKINI DENGAN SUIS MOD A/B) -->
 <div id="tvSettingsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
   <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl p-6 text-white space-y-5 animate-in fade-in zoom-in duration-200">
     
@@ -413,21 +435,42 @@
     <!-- BORANG TETAPAN -->
     <div class="space-y-4">
       
-      <!-- 1. BARIS PER SLAID -->
+      <!-- 1. SUIS MOD PAPARAN (MOD A VS MOD B) -->
       <div class="space-y-1">
-        <label class="text-xs font-bold text-slate-300">1. Jumlah Baris Per Slaid:</label>
+        <label class="text-xs font-bold text-slate-300 block mb-1">1. Format Susunan Data Slide:</label>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="flex items-center gap-2 p-2.5 bg-slate-800 border border-slate-700 rounded-xl cursor-pointer hover:border-amber-400 transition">
+            <input type="radio" name="settingTvMode" value="A" class="w-4 h-4 text-amber-400 focus:ring-0">
+            <div>
+              <div class="text-xs font-bold text-white">Mod A</div>
+              <div class="text-[10px] text-slate-400">Ikut Waktu</div>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 bg-slate-800 border border-slate-700 rounded-xl cursor-pointer hover:border-amber-400 transition">
+            <input type="radio" name="settingTvMode" value="B" class="w-4 h-4 text-amber-400 focus:ring-0">
+            <div>
+              <div class="text-xs font-bold text-white">Mod B</div>
+              <div class="text-[10px] text-slate-400">Ikut Guru (ASC)</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 2. BARIS PER SLAID -->
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-300">2. Jumlah Baris Per Slaid:</label>
         <input type="number" id="settingTvRows" min="3" max="15" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
       </div>
 
-      <!-- 2. MASA PERTUKARAN SLAID (SAAT) -->
+      <!-- 3. MASA PERTUKARAN SLAID (SAAT) -->
       <div class="space-y-1">
-        <label class="text-xs font-bold text-slate-300">2. Masa Tukar Slaid (Saat):</label>
+        <label class="text-xs font-bold text-slate-300">3. Masa Tukar Slaid (Saat):</label>
         <input type="number" id="settingSlideDuration" min="3" max="120" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
       </div>
 
-      <!-- 3. KELAJUAN TEKS BERJALAN (MARQUEE) -->
+      <!-- 4. KELAJUAN TEKS BERJALAN (MARQUEE) -->
       <div class="space-y-1">
-        <label class="text-xs font-bold text-slate-300">3. Kelajuan Teks Guru Tidak Hadir:</label>
+        <label class="text-xs font-bold text-slate-300">4. Kelajuan Teks Guru Tidak Hadir:</label>
         <select id="settingMarqueeSpeed" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
           <option value="2">Sangat Perlahan (Kelajuan: 2)</option>
           <option value="4">Perlahan / Standard (Kelajuan: 4)</option>
@@ -533,9 +576,10 @@
     let progressTimer = null;
     let isTvFormalTheme = localStorage.getItem('ERELIEF_TV_THEME') !== 'moden';
 
-    // ==========================================
+ // ==========================================
     // TETAPAN KHAS PERANTI TV (LOCALSTORAGE)
     // ==========================================
+    let TV_DISPLAY_MODE = localStorage.getItem('ERELIEF_TV_MODE') || 'A'; // 'A' atau 'B'
     let ROWS_PER_SLIDE = parseInt(localStorage.getItem('ERELIEF_TV_ROWS')) || 7;
     let SLIDE_DURATION_MS = (parseInt(localStorage.getItem('ERELIEF_TV_DURATION')) || 20) * 1000; // Dalam milisaat
     let MARQUEE_SPEED = parseInt(localStorage.getItem('ERELIEF_TV_MARQUEE_SPEED')) || 4;
@@ -544,6 +588,10 @@
     function openTvSettingsModal() {
       const modal = document.getElementById('tvSettingsModal');
       if (!modal) return;
+
+      // Setkan radio button mengikut Mod A atau Mod B semasa
+      const radioMode = document.querySelector(`input[name="settingTvMode"][value="${TV_DISPLAY_MODE}"]`);
+      if (radioMode) radioMode.checked = true;
 
       // Masukkan nilai semasa ke dalam input modal
       document.getElementById('settingTvRows').value = ROWS_PER_SLIDE;
@@ -565,6 +613,8 @@
 
     // FUNGSI SIMPAN TETAPAN BARU
     function saveTvSettings() {
+      const selectedModeEl = document.querySelector('input[name="settingTvMode"]:checked');
+      const modeVal = selectedModeEl ? selectedModeEl.value : 'A';
       const rowsVal = parseInt(document.getElementById('settingTvRows').value);
       const durationVal = parseInt(document.getElementById('settingSlideDuration').value);
       const marqueeVal = parseInt(document.getElementById('settingMarqueeSpeed').value);
@@ -575,10 +625,12 @@
       }
 
       // 1. Simpan ke LocalStorage peranti ini
+      TV_DISPLAY_MODE = modeVal;
       ROWS_PER_SLIDE = rowsVal;
       SLIDE_DURATION_MS = durationVal * 1000;
       MARQUEE_SPEED = marqueeVal;
 
+      localStorage.setItem('ERELIEF_TV_MODE', TV_DISPLAY_MODE);
       localStorage.setItem('ERELIEF_TV_ROWS', ROWS_PER_SLIDE);
       localStorage.setItem('ERELIEF_TV_DURATION', durationVal);
       localStorage.setItem('ERELIEF_TV_MARQUEE_SPEED', MARQUEE_SPEED);
@@ -594,15 +646,15 @@
       if (typeof renderTvSlide === 'function') {
         renderTvSlide();
       }
-      if (typeof startSlideTimer === 'function') {
-        startSlideTimer(); // Restart pemasa ikut masa baharu
+      if (typeof startSlideShow === 'function') {
+        startSlideShow(); // Restart pemasa ikut masa baharu
       }
 
       closeTvSettingsModal();
-      alert(`✅ Tetapan TV Berjaya Disimpan!\n- Baris: ${ROWS_PER_SLIDE}\n- Masa Slaid: ${durationVal} Saat\n- Kelajuan Marquee: ${MARQUEE_SPEED}`);
+      alert(`✅ Tetapan TV Berjaya Disimpan!\n- Mod Paparan: Mod ${TV_DISPLAY_MODE}\n- Baris: ${ROWS_PER_SLIDE}\n- Masa Slaid: ${durationVal} Saat\n- Kelajuan Marquee: ${MARQUEE_SPEED}`);
     }
 
-     document.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       await updateSchoolDisplay();
       await fetchCloudData();
       listenToRealtime();
@@ -943,46 +995,236 @@
       });
     }
 
+ // ==========================================
+    // TETAPAN KHAS DASHBOARD TV (STATIK)
+    // ==========================================
+    let isDbFormalTheme = localStorage.getItem('ERELIEF_DB_THEME') === 'formal';
+    let dbSortMode = localStorage.getItem('ERELIEF_DB_SORT') || 'A'; // 'A' atau 'B'
+
+    function toggleDashboardTheme() {
+      isDbFormalTheme = !isDbFormalTheme;
+      localStorage.setItem('ERELIEF_DB_THEME', isDbFormalTheme ? 'formal' : 'moden');
+      renderTvDashboard();
+    }
+
+    function toggleDashboardSort(mode) {
+      dbSortMode = mode;
+      localStorage.setItem('ERELIEF_DB_SORT', dbSortMode);
+      renderTvDashboard();
+    }
+
+    // FUNGSI RENDER DASHBOARD TV (LENGKAP TEMA & MOD A/B)
     function renderTvDashboard() {
       const tbody = document.getElementById('tvTableBody');
-      tbody.innerHTML = "";
+      const tableHead = document.getElementById('tvTableHead');
+      const btnTheme = document.getElementById('btnDbTheme');
+      const btnSortA = document.getElementById('btnDbSortA');
+      const btnSortB = document.getElementById('btnDbSortB');
 
-      if(reliefDatabase.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-500">Tiada data. Buka Admin Panel untuk muat naik.</td></tr>`;
+      if (!tbody) return;
+
+      // 1. KEMASKINI WARNA KAD STATISTIK & BEKAS JADUAL
+      const card1 = document.getElementById('statCard1');
+      const card2 = document.getElementById('statCard2');
+      const card3 = document.getElementById('statCard3');
+      const dbContainer = document.getElementById('dbTableContainer');
+      const dbHeader = document.getElementById('tvDashboardHeader');
+      const dbTitle = document.getElementById('tvDashboardTitle');
+
+      if (isDbFormalTheme) {
+        // Mode Formal Korporat (Tukar ke Latar Putih & Teks Gelap)
+        if (card1) card1.className = "bg-white p-5 rounded-2xl border border-slate-200 shadow flex justify-between items-center transition-colors duration-300";
+        if (card2) card2.className = "bg-white p-5 rounded-2xl border border-slate-200 shadow flex justify-between items-center transition-colors duration-300";
+        if (card3) card3.className = "bg-white p-5 rounded-2xl border border-slate-200 shadow flex justify-between items-center transition-colors duration-300";
+        if (dbContainer) dbContainer.className = "bg-white rounded-2xl border border-slate-300 overflow-hidden shadow-xl transition-colors duration-300";
+        if (dbHeader) dbHeader.className = "p-4 bg-slate-100 border-b border-slate-300 flex flex-wrap justify-between items-center gap-2";
+        if (dbTitle) dbTitle.className = "font-black text-slate-900";
+      } else {
+        // Mode Moden Gelap (Asal)
+        if (card1) card1.className = "bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center transition-colors duration-300";
+        if (card2) card2.className = "bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center transition-colors duration-300";
+        if (card3) card3.className = "bg-slate-800 p-5 rounded-2xl border border-slate-700 flex justify-between items-center transition-colors duration-300";
+        if (dbContainer) dbContainer.className = "bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl transition-colors duration-300";
+        if (dbHeader) dbHeader.className = "p-4 bg-slate-800/50 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2";
+        if (dbTitle) dbTitle.className = "font-bold text-slate-200";
+      }
+
+      // 2. KEMASKINI BUTANG TOGGLE SORT
+      if (btnSortA && btnSortB) {
+        if (dbSortMode === 'B') {
+          btnSortA.className = "px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition cursor-pointer";
+          btnSortB.className = "px-2.5 py-1 rounded-lg bg-blue-600 text-white transition cursor-pointer";
+        } else {
+          btnSortA.className = "px-2.5 py-1 rounded-lg bg-blue-600 text-white transition cursor-pointer";
+          btnSortB.className = "px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition cursor-pointer";
+        }
+      }
+
+      // 3. KEMASKINI TAJUK LAJUR (HEADER TABLE)
+      if (tableHead) {
+        if (dbSortMode === 'B') {
+          tableHead.innerHTML = `
+            <tr class="${isDbFormalTheme ? 'bg-blue-800 text-white' : 'bg-slate-900/60 text-slate-400'} text-xs uppercase tracking-wider border-b border-slate-700">
+              <th class="py-3 px-6">Guru Cuti (Alasan)</th>
+              <th class="py-3 px-6 text-center w-28">Waktu</th>
+              <th class="py-3 px-6 text-center w-28">Subjek</th>
+              <th class="py-3 px-6 w-36">Kelas</th>
+              <th class="py-3 px-6">Guru Ganti</th>
+              <th class="py-3 px-6 text-center w-48">Status</th>
+            </tr>
+          `;
+        } else {
+          tableHead.innerHTML = `
+            <tr class="${isDbFormalTheme ? 'bg-blue-800 text-white' : 'bg-slate-900/60 text-slate-400'} text-xs uppercase tracking-wider border-b border-slate-700">
+              <th class="py-3 px-6 w-28">Waktu</th>
+              <th class="py-3 px-6">Guru Cuti (Alasan)</th>
+              <th class="py-3 px-6 w-36">Kelas</th>
+              <th class="py-3 px-6 w-28 text-center">Subjek</th>
+              <th class="py-3 px-6">Guru Ganti</th>
+              <th class="py-3 px-6 text-center w-48">Status</th>
+            </tr>
+          `;
+        }
+      }
+
+      // 4. PAPARAN DATA KOSONG
+      if (reliefDatabase.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-500 font-bold">Tiada data. Buka Admin Panel untuk muat naik.</td></tr>`;
         return;
       }
 
       let confirmedCount = 0;
 
-      reliefDatabase.forEach(item => {
-        if(item.status === "Confirmed") confirmedCount++;
+      // 5. SUSUN DATA MENGIKUT MOD A (WAKTU) ATAU MOD B (GURU ASC)
+      let processedData = [];
+
+      if (dbSortMode === 'B') {
+        let grouped = {};
+        reliefDatabase.forEach(item => {
+          if (!grouped[item.guru_cuti]) grouped[item.guru_cuti] = [];
+          grouped[item.guru_cuti].push(item);
+        });
+
+        Object.keys(grouped).forEach(teacher => {
+          const items = grouped[teacher];
+          items.forEach((item, index) => {
+            processedData.push({
+              ...item,
+              isFirstOfGroup: index === 0,
+              isLastOfGroup: index === items.length - 1
+            });
+          });
+        });
+      } else {
+        processedData = [...reliefDatabase];
+      }
+
+      tbody.innerHTML = "";
+
+      // 6. PENJANAAN BARIS JADUAL
+      processedData.forEach(item => {
+        if (item.status === "Confirmed") confirmedCount++;
 
         const tr = document.createElement('tr');
-        tr.className = item.status === "Confirmed" ? "hover:bg-slate-700/30" : "bg-amber-500/5 hover:bg-amber-500/10";
-        tr.innerHTML = `
-          <td class="py-4 px-6 font-bold text-blue-400">${item.waktu}</td>
-          <td class="py-4 px-6 text-slate-300 font-semibold">${item.guru_cuti} <span class="text-xs text-slate-500 block">(${item.alasan})</span></td>
-          <td class="py-4 px-6 font-bold text-white">${item.kelas}</td>
-          <td class="py-4 px-6"><span class="px-2.5 py-1 bg-slate-700 text-slate-200 rounded text-xs font-bold">${item.subjek}</span></td>
-          <td class="py-4 px-6 font-bold ${item.status === 'Confirmed' ? 'text-emerald-300' : 'text-amber-300'}">${item.guru_ganti}</td>
-          <td class="py-4 px-6 text-center">
-            ${item.status === 'Confirmed' 
-              ? `<span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">✓ Disahkan (${item.confirmed_time})</span>`
-              : `<span class="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">⏳ Belum Sah</span>`}
-          </td>
-        `;
+
+        if (dbSortMode === 'B') {
+          // --- PAPARAN MOD B ---
+          let teacherDisplay = item.isFirstOfGroup 
+            ? `${item.guru_cuti} <span class="text-xs text-slate-500 font-medium block">(${item.alasan})</span>` 
+            : '';
+
+          const borderStyle = item.isLastOfGroup 
+            ? (isDbFormalTheme ? 'border-b-2 border-slate-400' : 'border-b-2 border-slate-600') 
+            : (isDbFormalTheme ? 'border-b border-slate-200' : 'border-b border-slate-700/50');
+
+          if (isDbFormalTheme) {
+            tr.className = `bg-white hover:bg-slate-50 ${borderStyle} text-slate-800 font-semibold`;
+            tr.innerHTML = `
+              <td class="py-3.5 px-6 font-bold text-slate-800 text-sm md:text-base align-top">${teacherDisplay}</td>
+              <td class="py-3.5 px-6 font-bold text-blue-700 text-sm md:text-base text-center align-top">${item.waktu}</td>
+              <td class="py-3.5 px-6 text-center align-top"><span class="px-2.5 py-1 bg-slate-100 text-slate-800 border border-slate-300 rounded text-xs font-bold shadow-sm">${item.subjek}</span></td>
+              <td class="py-3.5 px-6 font-semibold text-slate-800 align-top">${item.kelas}</td>
+              <td class="py-3.5 px-6 font-semibold text-slate-800 align-top">${item.guru_ganti}</td>
+              <td class="py-3.5 px-6 text-center whitespace-nowrap align-top">
+                ${item.status === 'Confirmed' 
+                  ? `<span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-full text-xs font-bold shadow-sm">✓ Disahkan (${item.confirmed_time})</span>`
+                  : `<span class="inline-block px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-xs font-bold shadow-sm">⏳ Belum Sah</span>`}
+              </td>
+            `;
+          } else {
+            tr.className = `${item.status === "Confirmed" ? "hover:bg-slate-700/30" : "bg-amber-500/5 hover:bg-amber-500/10"} ${borderStyle}`;
+            tr.innerHTML = `
+              <td class="py-3 px-6 font-bold text-slate-200 align-top">${teacherDisplay}</td>
+              <td class="py-3 px-6 font-bold text-blue-400 text-center align-top">${item.waktu}</td>
+              <td class="py-3 px-6 text-center align-top"><span class="px-2.5 py-1 bg-slate-700 text-slate-200 rounded-lg text-xs font-bold">${item.subjek}</span></td>
+              <td class="py-3 px-6 font-bold text-white align-top">${item.kelas}</td>
+              <td class="py-3 px-6 font-bold ${item.status === 'Confirmed' ? 'text-emerald-300' : 'text-amber-300'} align-top">${item.guru_ganti}</td>
+              <td class="py-3 px-6 text-center align-top">
+                ${item.status === 'Confirmed' 
+                  ? `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">✓ Disahkan (${item.confirmed_time})</span>`
+                  : `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">⏳ Belum Sah</span>`}
+              </td>
+            `;
+          }
+
+        } else {
+          // --- PAPARAN MOD A (IKUT WAKTU) ---
+          if (isDbFormalTheme) {
+            tr.className = "bg-white hover:bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold";
+            tr.innerHTML = `
+              <td class="py-3.5 px-6 font-bold text-blue-700 text-sm md:text-base">${item.waktu}</td>
+              <td class="py-3.5 px-6 text-slate-800 font-semibold">${item.guru_cuti} <span class="text-xs text-slate-500 font-medium block">(${item.alasan})</span></td>
+              <td class="py-3.5 px-6 font-semibold text-slate-800">${item.kelas}</td>
+              <td class="py-3.5 px-6 text-center"><span class="px-2.5 py-1 bg-slate-100 text-slate-800 border border-slate-300 rounded text-xs font-bold shadow-sm">${item.subjek}</span></td>
+              <td class="py-3.5 px-6 font-semibold text-slate-800">${item.guru_ganti}</td>
+              <td class="py-3.5 px-6 text-center whitespace-nowrap">
+                ${item.status === 'Confirmed' 
+                  ? `<span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-full text-xs font-bold shadow-sm">✓ Disahkan (${item.confirmed_time})</span>`
+                  : `<span class="inline-block px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-xs font-bold shadow-sm">⏳ Belum Sah</span>`}
+              </td>
+            `;
+          } else {
+            tr.className = item.status === "Confirmed" ? "hover:bg-slate-700/30 border-b border-slate-700/40" : "bg-amber-500/5 hover:bg-amber-500/10 border-b border-slate-700/40";
+            tr.innerHTML = `
+              <td class="py-4 px-6 font-bold text-blue-400">${item.waktu}</td>
+              <td class="py-4 px-6 text-slate-300 font-semibold">${item.guru_cuti} <span class="text-xs text-slate-500 block">(${item.alasan})</span></td>
+              <td class="py-4 px-6 font-bold text-white">${item.kelas}</td>
+              <td class="py-4 px-6"><span class="px-2.5 py-1 bg-slate-700 text-slate-200 rounded text-xs font-bold">${item.subjek}</span></td>
+              <td class="py-4 px-6 font-bold ${item.status === 'Confirmed' ? 'text-emerald-300' : 'text-amber-300'}">${item.guru_ganti}</td>
+              <td class="py-4 px-6 text-center">
+                ${item.status === 'Confirmed' 
+                  ? `<span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">✓ Disahkan (${item.confirmed_time})</span>`
+                  : `<span class="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">⏳ Belum Sah</span>`}
+              </td>
+            `;
+          }
+        }
+
         tbody.appendChild(tr);
       });
 
+      // 7. KEMASKINI WIDGET BUTANG TEMA
+      if (btnTheme) {
+        if (isDbFormalTheme) {
+          btnTheme.innerText = "🏛️ Mod Formal Korporat";
+          btnTheme.className = "bg-blue-800 hover:bg-blue-700 text-white border border-blue-900 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer";
+        } else {
+          btnTheme.innerText = "🌙 Mod Moden (Gelap)";
+          btnTheme.className = "bg-slate-700 hover:bg-slate-600 text-slate-200 border border-slate-600 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer";
+        }
+      }
+
+      // 8. KEMASKINI STATISTIK ATAS
       document.getElementById('statTotal').textContent = reliefDatabase.length;
       document.getElementById('statConfirmed').textContent = confirmedCount;
       let rate = reliefDatabase.length > 0 ? Math.round((confirmedCount / reliefDatabase.length) * 100) : 0;
       document.getElementById('statRate').textContent = `${rate}%`;
     }
 
-    // FUNGSI KHAS: SLIDE SHOW UNTUK TV (MOD FORMAL CORPORATE SERAGAM)
+  // FUNGSI KHAS: SLIDE SHOW UNTUK TV (SOKONGAN MOD A & MOD B + LOGIK SAMBUNG)
     function renderTvSlide() {
       const tbody = document.getElementById('tvSlideTableBody');
+      const tableHeader = document.getElementById('slideTableHeader');
       const indicator = document.getElementById('slideIndicator');
       if(!tbody) return;
 
@@ -992,55 +1234,152 @@
         return;
       }
 
-      const totalSlides = Math.ceil(reliefDatabase.length / ROWS_PER_SLIDE);
+      // 1. KEMASKINI TAJUK LAJUR SAMA ADA MOD A ATAU MOD B
+      if (tableHeader) {
+        if (TV_DISPLAY_MODE === 'B') {
+          tableHeader.innerHTML = `
+            <th class="py-3 px-6">Guru Cuti (Alasan)</th>
+            <th class="py-3 px-6 w-28 text-center">Waktu</th>
+            <th class="py-3 px-6 w-28 text-center">Subjek</th>
+            <th class="py-3 px-6 w-36">Kelas</th>
+            <th class="py-3 px-6">Guru Ganti</th>
+            <th class="py-3 px-6 text-center w-48">Status</th>
+          `;
+        } else {
+          tableHeader.innerHTML = `
+            <th class="py-3 px-6 w-28">Waktu</th>
+            <th class="py-3 px-6">Guru Cuti (Alasan)</th>
+            <th class="py-3 px-6 w-36">Kelas</th>
+            <th class="py-3 px-6 w-28 text-center">Subjek</th>
+            <th class="py-3 px-6">Guru Ganti</th>
+            <th class="py-3 px-6 text-center w-48">Status</th>
+          `;
+        }
+      }
+
+      // 2. PROSES DATA MENGIKUT MOD SELEKSI
+      let processedData = [];
+
+      if (TV_DISPLAY_MODE === 'B') {
+        // --- MOD B: GROUPING MENGIKUT GURU TIDAK HADIR (FORMAT ASC) ---
+        let grouped = {};
+        reliefDatabase.forEach(item => {
+          if (!grouped[item.guru_cuti]) grouped[item.guru_cuti] = [];
+          grouped[item.guru_cuti].push(item);
+        });
+
+        Object.keys(grouped).forEach(teacher => {
+          const items = grouped[teacher];
+          items.forEach((item, index) => {
+            processedData.push({
+              ...item,
+              teacherGroup: teacher,
+              isFirstOfGroup: index === 0,
+              isLastOfGroup: index === items.length - 1
+            });
+          });
+        });
+      } else {
+        // --- MOD A: SUSUNAN IKUT WAKTU (SEDIA ADA) ---
+        processedData = [...reliefDatabase];
+      }
+
+      // 3. KIRA JUMLAH SLAID & ITEM
+      const totalSlides = Math.ceil(processedData.length / ROWS_PER_SLIDE);
       if (currentSlideIndex >= totalSlides) currentSlideIndex = 0;
       if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1;
 
       if(indicator) indicator.innerText = `Slaid ${currentSlideIndex + 1} / ${totalSlides}`;
 
       const startIndex = currentSlideIndex * ROWS_PER_SLIDE;
-      const slideItems = reliefDatabase.slice(startIndex, startIndex + ROWS_PER_SLIDE);
+      const slideItems = processedData.slice(startIndex, startIndex + ROWS_PER_SLIDE);
 
       tbody.classList.add('opacity-0');
 
       setTimeout(() => {
         tbody.innerHTML = "";
-        slideItems.forEach(item => {
+        
+        slideItems.forEach((item, index) => {
           const tr = document.createElement('tr');
           
-          if (isTvFormalTheme) {
-            tr.className = "bg-white hover:bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold";
-            
-            tr.innerHTML = `
-              <td class="py-3.5 px-6 font-bold text-blue-700 text-sm md:text-base">${item.waktu}</td>
-              <td class="py-3.5 px-6 text-slate-800 font-semibold md:text-base">${item.guru_cuti} <span class="text-xs text-slate-500 font-medium block">(${item.alasan})</span></td>
-              <td class="py-3.5 px-6 font-semibold text-slate-800 md:text-base">${item.kelas}</td>
-              <td class="py-3.5 px-6 text-center"><span class="px-2.5 py-1 bg-slate-100 text-slate-800 border border-slate-300 rounded text-xs md:text-sm font-bold shadow-sm">${item.subjek}</span></td>
-              <td class="py-3.5 px-6 font-semibold text-slate-800 md:text-base">${item.guru_ganti}</td>
-              <td class="py-3.5 px-6 text-center whitespace-nowrap">
-                ${item.status === 'Confirmed' 
-                  ? `<span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded text-xs md:text-sm font-bold shadow-sm">✓ Disahkan (${item.confirmed_time})</span>`
-                  : `<span class="inline-block px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded text-xs md:text-sm font-bold shadow-sm">⏳ Belum Sah</span>`}
-              </td>
-            `;
+          if (TV_DISPLAY_MODE === 'B') {
+            // === LOGIK PAPARAN MOD B ===
+            let teacherDisplay = "";
+
+            if (item.isFirstOfGroup) {
+              teacherDisplay = `${item.guru_cuti} <span class="text-xs text-slate-500 font-medium block">(${item.alasan})</span>`;
+            } else if (index === 0) {
+              // Baris pertama dalam slide ini adalah sambungan dari slide sebelumnya!
+              teacherDisplay = `${item.guru_cuti} <span class="text-xs text-amber-600 font-bold block">(Sambung)</span>`;
+            }
+
+            const borderBottomStyle = item.isLastOfGroup ? "border-b-2 border-slate-400" : "border-b border-slate-200";
+
+            if (isTvFormalTheme) {
+              tr.className = `bg-white hover:bg-slate-50 ${borderBottomStyle} text-slate-800 font-semibold`;
+              tr.innerHTML = `
+                <td class="py-3.5 px-6 text-slate-800 font-bold md:text-base align-top">${teacherDisplay}</td>
+                <td class="py-3.5 px-6 font-bold text-blue-700 text-sm md:text-base text-center align-top">${item.waktu}</td>
+                <td class="py-3.5 px-6 text-center align-top"><span class="px-2.5 py-1 bg-slate-100 text-slate-800 border border-slate-300 rounded text-xs md:text-sm font-bold shadow-sm">${item.subjek}</span></td>
+                <td class="py-3.5 px-6 font-semibold text-slate-800 md:text-base align-top">${item.kelas}</td>
+                <td class="py-3.5 px-6 font-semibold text-slate-800 md:text-base align-top">${item.guru_ganti}</td>
+                <td class="py-3.5 px-6 text-center whitespace-nowrap align-top">
+                  ${item.status === 'Confirmed' 
+                    ? `<span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded text-xs md:text-sm font-bold shadow-sm">✓ Disahkan (${item.confirmed_time})</span>`
+                    : `<span class="inline-block px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded text-xs md:text-sm font-bold shadow-sm">⏳ Belum Sah</span>`}
+                </td>
+              `;
+            } else {
+              tr.className = `bg-slate-800 hover:bg-slate-700/50 ${borderBottomStyle} text-slate-100 font-semibold`;
+              tr.innerHTML = `
+                <td class="py-3 px-6 text-slate-200 font-bold align-top">${teacherDisplay}</td>
+                <td class="py-3 px-6 font-bold text-blue-400 text-center align-top">${item.waktu}</td>
+                <td class="py-3 px-6 text-center align-top"><span class="px-2.5 py-1 bg-slate-700 text-slate-200 rounded-lg text-xs font-bold">${item.subjek}</span></td>
+                <td class="py-3 px-6 font-bold text-white text-base align-top">${item.kelas}</td>
+                <td class="py-3 px-6 font-bold ${item.status === 'Confirmed' ? 'text-emerald-300' : 'text-amber-300'} align-top">${item.guru_ganti}</td>
+                <td class="py-3 px-6 text-center align-top">
+                  ${item.status === 'Confirmed' 
+                    ? `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">✓ Disahkan (${item.confirmed_time})</span>`
+                    : `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">⏳ Belum Sah</span>`}
+                </td>
+              `;
+            }
+
           } else {
-            tr.className = item.status === "Confirmed" 
-              ? "hover:bg-slate-700/30 border-b border-slate-700/40" 
-              : "bg-amber-500/5 hover:bg-amber-500/10 border-b border-slate-700/40";
-            
-            tr.innerHTML = `
-              <td class="py-3 px-6 font-bold text-blue-400">${item.waktu}</td>
-              <td class="py-3 px-6 text-slate-200 font-semibold">${item.guru_cuti} <span class="text-xs text-slate-400 block">(${item.alasan})</span></td>
-              <td class="py-3 px-6 font-bold text-white text-base">${item.kelas}</td>
-              <td class="py-3 px-6"><span class="px-2.5 py-1 bg-slate-700 text-slate-200 rounded-lg text-xs font-bold">${item.subjek}</span></td>
-              <td class="py-3 px-6 font-bold ${item.status === 'Confirmed' ? 'text-emerald-300' : 'text-amber-300'}">${item.guru_ganti}</td>
-              <td class="py-3 px-6 text-center">
-                ${item.status === 'Confirmed' 
-                  ? `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">✓ Disahkan (${item.confirmed_time})</span>`
-                  : `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">⏳ Belum Sah</span>`}
-              </td>
-            `;
+            // === LOGIK PAPARAN MOD A (SEDIA ADA) ===
+            if (isTvFormalTheme) {
+              tr.className = "bg-white hover:bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold";
+              tr.innerHTML = `
+                <td class="py-3.5 px-6 font-bold text-blue-700 text-sm md:text-base">${item.waktu}</td>
+                <td class="py-3.5 px-6 text-slate-800 font-semibold md:text-base">${item.guru_cuti} <span class="text-xs text-slate-500 font-medium block">(${item.alasan})</span></td>
+                <td class="py-3.5 px-6 font-semibold text-slate-800 md:text-base">${item.kelas}</td>
+                <td class="py-3.5 px-6 text-center"><span class="px-2.5 py-1 bg-slate-100 text-slate-800 border border-slate-300 rounded text-xs md:text-sm font-bold shadow-sm">${item.subjek}</span></td>
+                <td class="py-3.5 px-6 font-semibold text-slate-800 md:text-base">${item.guru_ganti}</td>
+                <td class="py-3.5 px-6 text-center whitespace-nowrap">
+                  ${item.status === 'Confirmed' 
+                    ? `<span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded text-xs md:text-sm font-bold shadow-sm">✓ Disahkan (${item.confirmed_time})</span>`
+                    : `<span class="inline-block px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded text-xs md:text-sm font-bold shadow-sm">⏳ Belum Sah</span>`}
+                </td>
+              `;
+            } else {
+              tr.className = item.status === "Confirmed" 
+                ? "hover:bg-slate-700/30 border-b border-slate-700/40" 
+                : "bg-amber-500/5 hover:bg-amber-500/10 border-b border-slate-700/40";
+              tr.innerHTML = `
+                <td class="py-3 px-6 font-bold text-blue-400">${item.waktu}</td>
+                <td class="py-3 px-6 text-slate-200 font-semibold">${item.guru_cuti} <span class="text-xs text-slate-400 block">(${item.alasan})</span></td>
+                <td class="py-3 px-6 font-bold text-white text-base">${item.kelas}</td>
+                <td class="py-3 px-6"><span class="px-2.5 py-1 bg-slate-700 text-slate-200 rounded-lg text-xs font-bold">${item.subjek}</span></td>
+                <td class="py-3 px-6 font-bold ${item.status === 'Confirmed' ? 'text-emerald-300' : 'text-amber-300'}">${item.guru_ganti}</td>
+                <td class="py-3 px-6 text-center">
+                  ${item.status === 'Confirmed' 
+                    ? `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">✓ Disahkan (${item.confirmed_time})</span>`
+                    : `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">⏳ Belum Sah</span>`}
+                </td>
+              `;
+            }
           }
+
           tbody.appendChild(tr);
         });
         tbody.classList.remove('opacity-0');
@@ -1189,7 +1528,7 @@
       generatePDF();
     }
 
-    // FUNGSI 1: JANA SLIP INDIVIDU PDF
+  // FUNGSI 1: JANA SLIP INDIVIDU PDF (DENGAN REKA BENTUK CETAKAN STABIL)
     function generatePDF() {
       const selectedTeacher = document.getElementById('teacherSelect').value;
       if (!selectedTeacher) {
@@ -1203,44 +1542,168 @@
         return;
       }
 
-      document.getElementById('pdfSchoolName').innerText = currentSchool;
-      document.getElementById('pdfReliefDate').innerText = activeTarikhHeader;
-      document.getElementById('pdfTeacherName').innerText = selectedTeacher;
-      document.getElementById('pdfTotalCount').innerText = teacherItems.length;
-      document.getElementById('pdfPrintDate').innerText = new Date().toLocaleDateString('ms-MY', {
+      const printDateStr = new Date().toLocaleDateString('ms-MY', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
       });
 
-      const pdfTbody = document.getElementById('pdfTableBody');
-      pdfTbody.innerHTML = "";
-
+      // Bina Baris Jadual
+      let tableRowsHtml = "";
       teacherItems.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.className = "border-b border-slate-300";
-        tr.innerHTML = `
-          <td class="border border-slate-300 p-2 font-bold">${item.waktu}</td>
-          <td class="border border-slate-300 p-2 font-bold">${item.kelas}</td>
-          <td class="border border-slate-300 p-2">${item.subjek}</td>
-          <td class="border border-slate-300 p-2">${item.guru_cuti} (${item.alasan})</td>
-          <td class="border border-slate-300 p-2 text-center">${item.status === 'Confirmed' ? '✓ ' + item.confirmed_time : 'Belum Sah'}</td>
+        const isConfirmed = item.status === 'Confirmed';
+        const statusText = isConfirmed ? `✓ Disahkan (${item.confirmed_time})` : 'Belum Sah';
+        const statusColor = isConfirmed ? 'color: #065f46; font-weight: bold;' : 'color: #92400e;';
+
+        tableRowsHtml += `
+          <tr style="border-bottom: 1px solid #cbd5e1;">
+            <td style="padding: 10px; font-weight: bold; text-align: center;">${item.waktu}</td>
+            <td style="padding: 10px; font-weight: bold; text-align: center;">${item.kelas}</td>
+            <td style="padding: 10px; text-align: center; font-weight: 600;">${item.subjek}</td>
+            <td style="padding: 10px;">${item.guru_cuti} <span style="font-size: 11px; color: #64748b; display: block;">(${item.alasan})</span></td>
+            <td style="padding: 10px; text-align: center; ${statusColor}">${statusText}</td>
+          </tr>
         `;
-        pdfTbody.appendChild(tr);
       });
 
-      const element = document.getElementById('pdfTemplate');
-      element.classList.remove('hidden');
+      // Buka Tab Baharu
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        alert("Sila benarkan 'Pop-up' pada pelayar anda untuk membuka paparan dokumen.");
+        return;
+      }
 
-      const opt = {
-        margin:       10,
-        filename:     `Slip_Relief_${selectedTeacher.replace(/\s+/g, '_')}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Slip Relief - ${selectedTeacher}</title>
+          <script src="https://cdn.tailwindcss.com"><\/script>
+          <style>
+            body { 
+              background-color: #f8fafc; 
+              margin: 0; 
+              padding: 0; 
+              font-family: ui-sans-serif, system-ui, sans-serif; 
+            }
+            .no-print-bar {
+              position: sticky;
+              top: 0;
+              z-index: 9999;
+              background-color: #0f172a;
+              color: white;
+              padding: 12px 20px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+            .btn-action {
+              padding: 8px 18px;
+              border-radius: 8px;
+              font-weight: bold;
+              cursor: pointer;
+              border: none;
+              font-size: 14px;
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              background-color: #2563eb; 
+              color: white;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            .btn-action:hover { background-color: #1d4ed8; }
+            .print-container {
+              max-width: 680px;
+              margin: 30px auto;
+              background: white;
+              padding: 35px;
+              box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+              border-radius: 12px;
+              border: 1px solid #e2e8f0;
+            }
 
-      html2pdf().set(opt).from(element).save().then(() => {
-        element.classList.add('hidden');
-      });
+            /* ATURAN CETAKAN KHAS UNTUK SLIP INDIVIDU */
+            @media print {
+              .no-print-bar { 
+                display: none !important; 
+              }
+              body { 
+                background: white !important; 
+              }
+              body * {
+                visibility: visible !important;
+              }
+              .print-container, .print-container * {
+                visibility: visible !important;
+              }
+              .print-container { 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                box-shadow: none !important; 
+                border: none !important;
+                max-width: 100% !important; 
+                width: 100% !important;
+              }
+              @page { 
+                margin: 12mm; 
+                size: A4 portrait; 
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="no-print-bar">
+            <span style="font-size: 15px; font-weight: 600;">📄 Prapaparan Slip Relief Individu</span>
+            <button onclick="window.print()" class="btn-action">🖨️ CETAK / SIMPAN PDF</button>
+          </div>
+
+          <div class="print-container">
+            <!-- HEADER SLIP -->
+            <div style="text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px;">
+              <h2 style="font-size: 18px; font-weight: 900; text-transform: uppercase; margin: 0; letter-spacing: 0.5px; color: #0f172a;">${currentSchool}</h2>
+              <h3 style="font-size: 14px; font-weight: 700; color: #334155; margin: 4px 0 0 0;">SLIP JADUAL GANTI (RELIEF) INDIVIDU</h3>
+              <p style="font-size: 12px; font-weight: 700; color: #2563eb; margin: 6px 0 0 0;">Tarikh Relief: <span>${activeTarikhHeader}</span></p>
+            </div>
+
+            <!-- MAKLUMAT GURU -->
+            <div style="font-size: 13px; margin-bottom: 16px; background-color: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
+              <div style="margin-bottom: 4px;"><strong>Nama Guru Ganti:</strong> <span style="color: #1e40af; font-weight: 800; font-size: 14px;">${selectedTeacher}</span></div>
+              <div style="margin-bottom: 4px;"><strong>Jumlah Waktu Relief:</strong> <span style="font-weight: 700;">${teacherItems.length} Kelas</span></div>
+              <div style="color: #64748b; font-size: 11px;"><strong>Masa Cetakan:</strong> ${printDateStr}</div>
+            </div>
+
+            <!-- JADUAL RELIEF -->
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px; border: 1px solid #cbd5e1; margin-bottom: 25px;">
+              <thead>
+                <tr style="background-color: #f1f5f9; border-bottom: 2px solid #94a3b8; color: #0f172a; font-weight: 800; text-transform: uppercase; font-size: 11px;">
+                  <th style="padding: 10px; width: 15%; text-align: center;">Waktu</th>
+                  <th style="padding: 10px; width: 15%; text-align: center;">Kelas</th>
+                  <th style="padding: 10px; width: 15%; text-align: center;">Subjek</th>
+                  <th style="padding: 10px; width: 35%; text-align: left;">Guru Diganti (Alasan)</th>
+                  <th style="padding: 10px; width: 20%; text-align: center;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tableRowsHtml}
+              </tbody>
+            </table>
+
+            <!-- AKUAN & PENGESAHAN -->
+            <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; font-size: 11px; color: #475569;">
+              <div style="width: 60%;">
+                <p style="margin: 0; font-style: italic;">* Dokumen ini dijanakan secara automatik oleh Sistem E-Relief v2.</p>
+                <p style="margin: 2px 0 0 0; font-weight: 600; color: #16a34a;">✓ Pengesahan Digital & Rekod Awam</p>
+              </div>
+              <div style="text-align: center; width: 35%;">
+                <div style="border-bottom: 1px solid #94a3b8; width: 100%; height: 40px; margin-bottom: 4px;"></div>
+                <p style="margin: 0; font-weight: 700; color: #0f172a;">Tandatangan / Pengesahan Guru</p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `);
+
+      printWindow.document.close();
     }
 
 // FUNGSI 2: JANA MASTER RELIEF PDF (TAB BAHARU DENGAN BUTANG PRINT & WHATSAPP)
